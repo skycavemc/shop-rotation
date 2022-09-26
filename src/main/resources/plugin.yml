@@ -6,4 +6,8 @@ main: de.skycave.shoprotation.ShopRotation
 depend:
   - SkyBeeCore
 
+commands:
+  shoprotation:
+    aliases: [srotation]
+    permission: skycave.shoprotation.admin
 
