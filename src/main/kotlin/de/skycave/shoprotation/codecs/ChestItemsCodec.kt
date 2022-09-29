@@ -8,6 +8,7 @@ import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
 import org.bson.codecs.configuration.CodecRegistry
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
@@ -31,36 +32,39 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
         writer.writeStartArray()
         for (item in value.items.entries) {
             writer.writeStartDocument()
-            writer.writeName("itemstack")
-            itemStackCodec.encode(writer, item.key, encoderContext)
+            writer.writeName(item.key.toString())
+            writer.writeInt32(item.value)
+            writer.writeEndDocument()
         }
         writer.writeEndArray()
         writer.writeEndDocument()
     }
 
     override fun decode(reader: BsonReader?, decoderContext: DecoderContext?): ChestItems {
-        val chestTemplate = ChestItems()
-        reader ?: return chestTemplate
+        val chestitems = ChestItems()
+        reader ?: return chestitems
 
         reader.readStartDocument()
         while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             when (reader.readName()) {
-                "_id" -> chestTemplate.id = reader.readObjectId()
-                "name" -> chestTemplate.name = reader.readString()
+                "_id" -> chestitems.id = reader.readObjectId()
+                "name" -> chestitems.name = reader.readString()
                 "items" -> {
-                    val items = ArrayList<ItemStack>()
+                    val items = HashMap<Material, Int>()
                     reader.readStartArray()
-                    while (reader.readBsonType() == BsonType.BINARY) {
-                        items.add(itemStackCodec.decode(reader, decoderContext))
+                    while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+                        val type = Material.valueOf(reader.readName())
+                        items[type] = reader.readInt32()
+                        TODO("Data structure")
                     }
                     reader.readEndArray()
-                    chestTemplate.items = items
+                    chestitems.items = items
                 }
                 else -> reader.skipValue()
             }
         }
         reader.readEndDocument()
-        return chestTemplate
+        return chestitems
     }
 
     override fun getEncoderClass(): Class<ChestItems> {

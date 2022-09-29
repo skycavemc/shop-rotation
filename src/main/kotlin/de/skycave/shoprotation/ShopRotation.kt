@@ -2,7 +2,6 @@ package de.skycave.shoprotation
 
 import com.mongodb.client.MongoClient
 import de.skycave.shoprotation.codecs.ChestCodecProvider
-import de.skycave.shoprotation.codecs.ItemStackCodec
 import de.skycave.shoprotation.codecs.LocationCodec
 import de.skycave.shoprotation.command.ShopRotationCommand
 import de.skycave.skycavelib.annotations.Prefix
@@ -21,7 +20,7 @@ class ShopRotation : SkyCavePlugin() {
     override fun onEnable() {
 
         val registry = CodecRegistries.fromRegistries(
-            CodecRegistries.fromCodecs(ItemStackCodec(), LocationCodec()),
+            CodecRegistries.fromCodecs(LocationCodec()),
             CodecRegistries.fromProviders(ChestCodecProvider(), )
         )
 
