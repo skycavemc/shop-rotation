@@ -1,16 +1,30 @@
 package de.skycave.shoprotation
 
+import com.mongodb.client.MongoClient
+import de.skycave.shoprotation.codecs.ChestCodecProvider
+import de.skycave.shoprotation.codecs.ItemStackCodec
+import de.skycave.shoprotation.codecs.LocationCodec
 import de.skycave.shoprotation.command.ShopRotationCommand
 import de.skycave.skycavelib.annotations.Prefix
 import de.skycave.skycavelib.data.MessageRegistry
 import de.skycave.skycavelib.models.SkyCavePlugin
+import org.bson.codecs.configuration.CodecRegistries
 
 @Prefix("&fSky&3Cave &8» ")
 class ShopRotation : SkyCavePlugin() {
 
     val messages = MessageRegistry(this)
 
+    lateinit var mongoClient: MongoClient
+        private set
+
     override fun onEnable() {
+
+        val registry = CodecRegistries.fromRegistries(
+            CodecRegistries.fromCodecs(ItemStackCodec(), LocationCodec()),
+            CodecRegistries.fromProviders(ChestCodecProvider(), )
+        )
+
 
         registerCommand("shoprotation", ShopRotationCommand(this))
         registerEvents()
