@@ -18,9 +18,7 @@ class SingleIntCodec: Codec<Single<Int>> {
             writer.writeNull()
             return
         }
-
         writer.writeInt32(value.value)
-
     }
 
     override fun getEncoderClass(): Class<Single<Int>> {
