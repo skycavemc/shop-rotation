@@ -29,14 +29,12 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
         writer.writeName("name")
         writer.writeString(value.name)
         writer.writeName("items")
-        writer.writeStartArray()
+        writer.writeStartDocument()
         for (item in value.items.entries) {
-            writer.writeStartDocument()
             writer.writeName(item.key.toString())
             writer.writeInt32(item.value)
-            writer.writeEndDocument()
         }
-        writer.writeEndArray()
+        writer.writeEndDocument()
         writer.writeEndDocument()
     }
 
@@ -51,13 +49,11 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
                 "name" -> chestitems.name = reader.readString()
                 "items" -> {
                     val items = HashMap<Material, Int>()
-                    reader.readStartArray()
-                    while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+                    while (reader.readBsonType() == BsonType.DOCUMENT) {
                         val type = Material.valueOf(reader.readName())
                         items[type] = reader.readInt32()
-                        TODO("Data structure")
+                        reader.readEndDocument()
                     }
-                    reader.readEndArray()
                     chestitems.items = items
                 }
                 else -> reader.skipValue()
