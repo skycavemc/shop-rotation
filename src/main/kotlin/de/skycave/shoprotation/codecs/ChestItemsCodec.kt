@@ -50,6 +50,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
                 "items" -> {
                     val items = HashMap<Material, Int>()
                     while (reader.readBsonType() == BsonType.DOCUMENT) {
+                        reader.readStartDocument()
                         val type = Material.valueOf(reader.readName())
                         items[type] = reader.readInt32()
                         reader.readEndDocument()
