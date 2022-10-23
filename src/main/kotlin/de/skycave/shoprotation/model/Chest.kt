@@ -4,8 +4,8 @@ import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonProperty
 import org.bson.types.ObjectId
 import org.bukkit.Location
-import org.bukkit.inventory.ItemStack
-import java.util.concurrent.atomic.AtomicInteger
+import org.bukkit.Material
+import kotlin.properties.Delegates
 
 class Chest {
 
@@ -13,16 +13,20 @@ class Chest {
     lateinit var id: ObjectId
     lateinit var name: String
     lateinit var location: Location
-    lateinit var amount: Single<Int>
-    lateinit var item: ItemStack
+    var enabled by Delegates.notNull<Boolean>()
+    lateinit var item: Material
+    var amount by Delegates.notNull<Int>()
+    var requiredAmount by Delegates.notNull<Int>()
 
     constructor()
 
-    constructor(id: ObjectId, name: String, location: Location, amount: Single<Int>, item: ItemStack) {
+    constructor(id: ObjectId, name: String, location: Location, enabled: Boolean, item: Material, amount: Int, requiredAmount: Int) {
         this.id = id
         this.name = name
         this.location = location
-        this.amount = amount
+        this.enabled = enabled
         this.item = item
+        this.amount = amount
+        this.requiredAmount = requiredAmount
     }
 }

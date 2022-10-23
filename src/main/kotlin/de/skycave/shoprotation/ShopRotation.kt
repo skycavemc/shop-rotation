@@ -27,7 +27,7 @@ class ShopRotation : SkyCavePlugin() {
 
     override fun onEnable() {
         val registry = CodecRegistries.fromRegistries(
-            CodecRegistries.fromCodecs(LocationCodec(), SingleIntCodec()),
+            CodecRegistries.fromCodecs(LocationCodec()),
             CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider())
         )
         val settings = MongoClientSettings.builder().codecRegistry(registry).build()
@@ -52,10 +52,33 @@ class ShopRotation : SkyCavePlugin() {
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
 
-            //info messages
+            "chest-unknown" to "&cDie Chest %name wurde nicht gefunden.",
+
+            //help messages
+            "chest-set-location" to "&e/shoprotation setlocation <name> &8» &8Setzt die Location für die Chest ",
+            "chest-open-gui" to "&e/shoprotation open &8» &8Öffnet das Inventar der Chest ",
+            "chest-delete-items" to "&e/shoprotation delete &8» &8Löscht alle Items der Chest ",
+            "chest-show-items" to "&e/shoprotation items &8» &8Zeigt alle Items an",
+            "chest-show-current-item" to "&e/shoprotation current &8» &8Zeigt das aktuelle Item an",
+            "chest-enable" to "&e/shoprotation enable &8» &8Aktiviert die Chest",
+            "chest-disable" to "&e/shoprotation disable &8» &8Deaktiviert die Chest",
+            "chest-help" to "&e/shoprotation help &8» &8Zeigt diesen Text an",
 
             //location messages
             "set-location-success" to "&aOrt wurde erfolgreich gesetzt. &7(%x, %y, %z, %direction)",
+            "set-location-syntax" to "&e/shoprotation setlocation <name>",
+
+            //enable-disable messages
+            "set-enabled-success" to "&cDie Kiste wurde erfolgreich &aAktiviert&c.",
+            "enabled-all" to "&7Alle Chests wurden &aaktiviert&7.",
+            "set-disabled-success" to "&cDie Kiste wurde erfolgreich &4Deaktiviert&c.",
+            "disabled-all" to "&7Alle Chests wurden &cdeaktiviert&7.",
+            "already-enabled" to "&cDie Kiste ist schon &aActiviert&c.",
+            "already-disabled" to "&cDie Kiste ist schon &4Deaktiviert&c.",
+            "set-enabled-syntax" to "&e/shoprotation enable <all/name>",
+            "set-disabled-syntax" to "&e/shoprotation disable <all/name>",
+
+            //TODO: Kisten -> Chests ändern
         )
         this.messages.registerMany(messages)
     }
