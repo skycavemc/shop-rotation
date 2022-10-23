@@ -1,8 +1,10 @@
 package de.skycave.shoprotation.command
 
 import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Updates
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.Chest
+import de.skycave.shoprotation.utils.Formatting
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -36,7 +38,20 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     chest = Chest()
                     chest.name = name
                     chest.location = player.location
+
+                    main.chests.insertOne(chest)
+                    main.messages.get("chest-created-success")
+                        .replace("%name", name)
+                        .replace("%location", Formatting.formatLocation(player.location))
+                        .send(sender)
+                    return true
                 }
+                main.chests.updateOne(Filters.eq("name", name), Updates.set("location", player.location))
+                main.messages.get("set-location-success")
+                    .replace("%name", name)
+                    .replace("%location", Formatting.formatLocation(player.location))
+                    .send(sender)
+                return true
             }
             "open" -> {
 
@@ -60,9 +75,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 }
                 val name = args[1].lowercase()
                 if(name == "all") {
-                    main.chests.find().forEach {
-                        it.enabled = true
-                    }
+                    main.chests.updateMany(Filters.exists("name"), Updates.set("enabled", true))
                     main.messages.get("enabled-all").send(sender)
                     return true
                 }
@@ -75,7 +88,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     return true
                 }
                 if(!chest.enabled) {
-                    chest.enabled = true
+                    main.chests.updateOne(Filters.eq("name", name), Updates.set("enabled", true))
                     main.messages.get("set-enabled-success").send(sender)
                 } else {
                     main.messages.get("already-enabled").send(sender)
@@ -92,9 +105,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 }
                 val name = args[1].lowercase()
                 if(name == "all") {
-                    main.chests.find().forEach {
-                        it.enabled = false
-                    }
+                    main.chests.updateMany(Filters.exists("name"), Updates.set("enabled", false))
                     main.messages.get("disabled-all").send(sender)
                     return true
                 }
@@ -107,7 +118,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     return true
                 }
                 if(chest.enabled) {
-                    chest.enabled = false
+                    main.chests.updateOne(Filters.eq("name", name), Updates.set("enabled", false))
                     main.messages.get("set-disabled-success").send(sender)
                 } else {
                     main.messages.get("already-disabled").send(sender)
@@ -156,7 +167,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
 
         if (args.size == 1) {
             arguments.addAll(arrayOf(
-                "setlocation", "open", "help", "delete", "current", "items", "enable", "disable")
+                "setlocation", "open", "help", "delete", "current", "items", "enable", "disable") //TODO: Add subcommand for items
             )
             StringUtil.copyPartialMatches(args[0], arguments, completions)
         }

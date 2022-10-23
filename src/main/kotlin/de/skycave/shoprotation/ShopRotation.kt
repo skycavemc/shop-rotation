@@ -65,7 +65,8 @@ class ShopRotation : SkyCavePlugin() {
             "chest-help" to "&e/shoprotation help &8» &8Zeigt diesen Text an",
 
             //location messages
-            "set-location-success" to "&aOrt wurde erfolgreich gesetzt. &7(%x, %y, %z, %direction)",
+            "set-location-success" to "&aOrt von %name wurde erfolgreich gesetzt. &7(%location)",
+            "chest-created-success" to "&aChest %name wurde erstellt. &7(%location)",
             "set-location-syntax" to "&e/shoprotation setlocation <name>",
 
             //enable-disable messages
