@@ -6,6 +6,7 @@ import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import de.skycave.shoprotation.codecs.*
 import de.skycave.shoprotation.command.ShopRotationCommand
+import de.skycave.shoprotation.command.ShopRotationSubCommand
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.skycavelib.annotations.Prefix
@@ -26,6 +27,7 @@ class ShopRotation : SkyCavePlugin() {
         private set
 
     override fun onEnable() {
+        super.onEnable()
         val registry = CodecRegistries.fromRegistries(
             CodecRegistries.fromCodecs(LocationCodec()),
             CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider())
@@ -37,10 +39,12 @@ class ShopRotation : SkyCavePlugin() {
         chestItems = db.getCollection("chest_items", ChestItems::class.java)
 
         registerCommand("shoprotation", ShopRotationCommand(this))
+        //registerCommand("shoprotation", ShopRotationSubCommand(this))
         registerEvents()
     }
 
     override fun onDisable() {
+        super.onDisable()
     }
 
     private fun registerMessages() {
@@ -79,7 +83,7 @@ class ShopRotation : SkyCavePlugin() {
             "set-enabled-syntax" to "&e/shoprotation enable <all/name>",
             "set-disabled-syntax" to "&e/shoprotation disable <all/name>",
 
-            //TODO: Kisten -> Chests ändern
+            //TODO: Kisten -> Chests ändern (Message)
         )
         this.messages.registerMany(messages)
     }

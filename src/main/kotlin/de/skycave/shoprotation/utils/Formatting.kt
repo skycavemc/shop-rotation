@@ -1,7 +1,6 @@
 package de.skycave.shoprotation.utils
 
 import org.bukkit.Location
-import java.text.NumberFormat
 
 object Formatting {
 

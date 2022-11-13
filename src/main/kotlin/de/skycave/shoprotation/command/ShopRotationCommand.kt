@@ -21,6 +21,13 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         }
 
         when (args[0].lowercase()) {
+            "items" -> {
+                if(args.size < 2) {
+                    sendHelp(sender)
+                    return true
+                }
+                return ShopRotationSubCommand().apply(sender, args)
+            }
             "setlocation" -> {
                 if(!checkConditions(true, "skybee.shoprotation.admin", sender)) {
                     return true
@@ -53,16 +60,13 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     .send(sender)
                 return true
             }
-            "open" -> {
+            "opengui" -> {
 
             }
             "delete" -> {
 
             }
             "current" -> {
-
-            }
-            "items" -> {
 
             }
             "enable" -> {
@@ -162,15 +166,33 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): MutableList<String> {
-        val arguments = ArrayList<String>()
+        var arguments = emptyList<String>()
         val completions = ArrayList<String>()
 
-        if (args.size == 1) {
-            arguments.addAll(arrayOf(
-                "setlocation", "open", "help", "delete", "current", "items", "enable", "disable") //TODO: Add subcommand for items
-            )
+        if(args.size == 1) {
+            arguments = listOf("setlocation", "help", "delete", "items", "enable", "disable", "opengui")
             StringUtil.copyPartialMatches(args[0], arguments, completions)
         }
+        if(args.size == 2) {
+            when (args[0].lowercase()) {
+                "items" -> {
+                    arguments = listOf("get", "getall", "modify", "current")
+                }
+                "delete" -> {
+                    val chests = main.chests.find()
+                    arguments = chests.map { it.name }.toList()
+                }
+            }
+            StringUtil.copyPartialMatches(args[1], arguments, completions)
+        }
+
+
+        //"setlocation", "help", "delete", "items", "enable", "disable", "opengui"
+
+        //items: get <all/index>
+        //items: add
+        //items: opengui
+        //items modify
 
         completions.sort()
         return completions
