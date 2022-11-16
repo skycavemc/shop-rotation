@@ -39,6 +39,10 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
         writer.writeInt32(value.amount)
         writer.writeName("required_amount")
         writer.writeInt32(value.requiredAmount)
+        writer.writeName("lootpool")
+        writer.writeStartArray()
+        value.lootpool.forEach{writer.writeString(it)}
+        writer.writeEndArray()
         writer.writeEndDocument()
     }
 
@@ -56,6 +60,14 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
                 "item" -> chest.item = Material.valueOf(reader.readString())
                 "amount" -> chest.amount = reader.readInt32()
                 "required_amount" -> chest.requiredAmount = reader.readInt32()
+                "lootpool" -> {
+                    val lootpool = ArrayList<String>()
+                    reader.readStartArray()
+                    while (reader.readBsonType() == BsonType.STRING) {
+                        lootpool.add(reader.readString())
+                    }
+                    reader.readEndArray()
+                }
                 else -> reader.skipValue()
             }
         }

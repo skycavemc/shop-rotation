@@ -20,5 +20,4 @@ class ChestItems {
         this.name = name
         this.items = items
     }
-
 }

@@ -162,7 +162,6 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         main.messages.get("chest-enable").send(sender)
         main.messages.get("chest-disable").send(sender)
         main.messages.get("chest-help").send(sender)
-
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): MutableList<String> {

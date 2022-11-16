@@ -17,19 +17,30 @@ class ShopRotationSubCommand: java.util.function.BiFunction<CommandSender, Array
 
         when (args[1].lowercase()) {
             "get" -> {
-
             }
             "getall" -> {
-
             }
             "modify" -> {
-
             }
             "current" -> {
+                val chest = main.chests.find().first()
+                val currentitem = chest?.item.toString()
+                val requiredamount = chest?.requiredAmount.toString()
+                val amount = chest?.amount.toString()
 
+                sender.sendMessage("&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)")
+                main.messages.get("current-item")
+                    .replace("%currentitem", currentitem)
+                    .replace("%amount", amount)
+                    .replace("%requiredamount", requiredamount)
+                    .send(sender)
+                return true
+            }
+            else -> {
+                main.messages.get("message-unknown").send(sender)
+                return true
             }
         }
-
         return true
     }
 

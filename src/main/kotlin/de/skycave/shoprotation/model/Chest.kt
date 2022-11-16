@@ -17,10 +17,20 @@ class Chest {
     lateinit var item: Material
     var amount by Delegates.notNull<Int>()
     var requiredAmount by Delegates.notNull<Int>()
+    lateinit var lootpool: List<String>
 
     constructor()
 
-    constructor(id: ObjectId, name: String, location: Location, enabled: Boolean, item: Material, amount: Int, requiredAmount: Int) {
+    constructor(
+        id: ObjectId,
+        name: String,
+        location: Location,
+        enabled: Boolean,
+        item: Material,
+        amount: Int,
+        requiredAmount: Int,
+        lootpool: List<String>
+    ) {
         this.id = id
         this.name = name
         this.location = location
@@ -28,5 +38,6 @@ class Chest {
         this.item = item
         this.amount = amount
         this.requiredAmount = requiredAmount
+        this.lootpool = lootpool
     }
 }

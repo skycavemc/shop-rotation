@@ -4,9 +4,10 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
-import de.skycave.shoprotation.codecs.*
+import de.skycave.shoprotation.codecs.ChestCodecProvider
+import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
+import de.skycave.shoprotation.codecs.LocationCodec
 import de.skycave.shoprotation.command.ShopRotationCommand
-import de.skycave.shoprotation.command.ShopRotationSubCommand
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.skycavelib.annotations.Prefix
@@ -82,6 +83,9 @@ class ShopRotation : SkyCavePlugin() {
             "already-disabled" to "&cDie Kiste ist schon &4Deaktiviert&c.",
             "set-enabled-syntax" to "&e/shoprotation enable <all/name>",
             "set-disabled-syntax" to "&e/shoprotation disable <all/name>",
+
+            //items messages
+            "current-item" to "&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)"
 
             //TODO: Kisten -> Chests ändern (Message)
         )
