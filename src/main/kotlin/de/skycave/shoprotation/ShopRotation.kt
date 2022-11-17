@@ -7,9 +7,11 @@ import com.mongodb.client.MongoCollection
 import de.skycave.shoprotation.codecs.ChestCodecProvider
 import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
 import de.skycave.shoprotation.codecs.LocationCodec
+import de.skycave.shoprotation.codecs.RewardsCodecProvider
 import de.skycave.shoprotation.command.ShopRotationCommand
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
+import de.skycave.shoprotation.model.Rewards
 import de.skycave.skycavelib.annotations.Prefix
 import de.skycave.skycavelib.data.MessageRegistry
 import de.skycave.skycavelib.models.SkyCavePlugin
@@ -26,18 +28,21 @@ class ShopRotation : SkyCavePlugin() {
         private set
     lateinit var chests: MongoCollection<Chest>
         private set
+    lateinit var rewards: MongoCollection<Rewards>
+        private set
 
     override fun onEnable() {
         super.onEnable()
         val registry = CodecRegistries.fromRegistries(
             CodecRegistries.fromCodecs(LocationCodec()),
-            CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider())
+            CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider(), RewardsCodecProvider())
         )
         val settings = MongoClientSettings.builder().codecRegistry(registry).build()
         mongoClient = MongoClients.create(settings)
         val db = mongoClient.getDatabase("shop_rotation")
         chests = db.getCollection("chests", Chest::class.java)
         chestItems = db.getCollection("chest_items", ChestItems::class.java)
+        rewards = db.getCollection("rewards", Rewards::class.java)
 
         registerCommand("shoprotation", ShopRotationCommand(this))
         //registerCommand("shoprotation", ShopRotationSubCommand(this))
@@ -57,6 +62,7 @@ class ShopRotation : SkyCavePlugin() {
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
 
+            //chest messages
             "chest-unknown" to "&cDie Chest %name wurde nicht gefunden.",
 
             //help messages
@@ -75,19 +81,17 @@ class ShopRotation : SkyCavePlugin() {
             "set-location-syntax" to "&e/shoprotation setlocation <name>",
 
             //enable-disable messages
-            "set-enabled-success" to "&cDie Kiste wurde erfolgreich &aAktiviert&c.",
+            "set-enabled-success" to "&cDie Chest wurde erfolgreich &aAktiviert&c.",
             "enabled-all" to "&7Alle Chests wurden &aaktiviert&7.",
-            "set-disabled-success" to "&cDie Kiste wurde erfolgreich &4Deaktiviert&c.",
+            "set-disabled-success" to "&cDie Chest wurde erfolgreich &4Deaktiviert&c.",
             "disabled-all" to "&7Alle Chests wurden &cdeaktiviert&7.",
-            "already-enabled" to "&cDie Kiste ist schon &aActiviert&c.",
-            "already-disabled" to "&cDie Kiste ist schon &4Deaktiviert&c.",
+            "already-enabled" to "&cDie Chest ist schon &aActiviert&c.",
+            "already-disabled" to "&cDie Chest ist schon &4Deaktiviert&c.",
             "set-enabled-syntax" to "&e/shoprotation enable <all/name>",
             "set-disabled-syntax" to "&e/shoprotation disable <all/name>",
 
             //items messages
             "current-item" to "&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)"
-
-            //TODO: Kisten -> Chests ändern (Message)
         )
         this.messages.registerMany(messages)
     }

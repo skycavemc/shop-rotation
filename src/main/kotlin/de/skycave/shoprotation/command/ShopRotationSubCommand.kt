@@ -17,10 +17,10 @@ class ShopRotationSubCommand: java.util.function.BiFunction<CommandSender, Array
 
         when (args[1].lowercase()) {
             "get" -> {
+
             }
             "getall" -> {
-            }
-            "modify" -> {
+
             }
             "current" -> {
                 val chest = main.chests.find().first()
@@ -43,6 +43,4 @@ class ShopRotationSubCommand: java.util.function.BiFunction<CommandSender, Array
         }
         return true
     }
-
-
 }

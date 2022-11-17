@@ -21,7 +21,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         }
 
         when (args[0].lowercase()) {
-            "items" -> {
+            "chest" -> {
                 if(args.size < 2) {
                     sendHelp(sender)
                     return true
@@ -63,12 +63,20 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             "opengui" -> {
 
             }
-            "delete" -> {
+            "remove" -> {
 
             }
             "current" -> {
 
             }
+            "lootpool" -> {
+                if(args.size < 2) {
+                    sendHelp(sender)
+                    return true
+                }
+                return ShopRotationLootpool().apply(sender, args)
+            }
+
             "enable" -> {
                 if(!checkConditions(false, "skybee.shoprotation.enable", sender)) {
                     return true
@@ -169,24 +177,26 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         val completions = ArrayList<String>()
 
         if(args.size == 1) {
-            arguments = listOf("setlocation", "help", "delete", "items", "enable", "disable", "opengui")
+            arguments = listOf("setlocation", "help", "remove", "items", "enable", "disable", "opengui", "chest", "lootpool")
             StringUtil.copyPartialMatches(args[0], arguments, completions)
         }
         if(args.size == 2) {
             when (args[0].lowercase()) {
-                "items" -> {
-                    arguments = listOf("get", "getall", "modify", "current")
+                "chest" -> {
+                    arguments = listOf("get", "getall", "current")
                 }
-                "delete" -> {
+                "remove" -> {
                     val chests = main.chests.find()
                     arguments = chests.map { it.name }.toList()
+                }
+                "lootpool" -> {
+                    arguments = listOf("get", "modify", "remove")
                 }
             }
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
 
-
-        //"setlocation", "help", "delete", "items", "enable", "disable", "opengui"
+        //"setlocation", "help", "remove", "chest", "enable", "disable", "opengui"
 
         //items: get <all/index>
         //items: add
@@ -196,6 +206,4 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         completions.sort()
         return completions
     }
-
-
 }

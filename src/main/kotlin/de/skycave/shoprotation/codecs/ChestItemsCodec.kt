@@ -36,6 +36,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
         }
         writer.writeEndDocument()
         writer.writeEndDocument()
+        //CORRECT? "writeEndDocument" 2x?
     }
 
     override fun decode(reader: BsonReader?, decoderContext: DecoderContext?): ChestItems {
