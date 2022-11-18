@@ -15,13 +15,16 @@ class ShopRotationLootpool: java.util.function.BiFunction<CommandSender, Array<o
             return true
         }
         when (args[1].lowercase()) {
-            "get" -> {
+            "addhanditem" -> {
 
             }
-            "modify" -> {
+            "add" -> {
 
             }
             "remove" -> {
+
+            }
+            "show" -> {
 
             }
             else -> {

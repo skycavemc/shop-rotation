@@ -76,7 +76,13 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 }
                 return ShopRotationLootpool().apply(sender, args)
             }
-
+            "rewards" -> {
+                if(args.size < 2) {
+                    sendHelp(sender)
+                    return true
+                }
+                return ShopRotationRewardsCommand().apply(sender, args)
+            }
             "enable" -> {
                 if(!checkConditions(false, "skybee.shoprotation.enable", sender)) {
                     return true
@@ -177,7 +183,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         val completions = ArrayList<String>()
 
         if(args.size == 1) {
-            arguments = listOf("setlocation", "help", "remove", "items", "enable", "disable", "opengui", "chest", "lootpool")
+            arguments = listOf("setlocation", "help", "remove", "items", "enable", "disable", "opengui", "chest", "lootpool", "rewards")
             StringUtil.copyPartialMatches(args[0], arguments, completions)
         }
         if(args.size == 2) {
@@ -190,7 +196,10 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     arguments = chests.map { it.name }.toList()
                 }
                 "lootpool" -> {
-                    arguments = listOf("get", "modify", "remove")
+                    arguments = listOf("addhanditem", "add", "remove", "show")
+                }
+                "rewards" -> {
+                    arguments = listOf("addhanditem", "add", "remove", "show")
                 }
             }
             StringUtil.copyPartialMatches(args[1], arguments, completions)

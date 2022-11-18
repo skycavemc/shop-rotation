@@ -4,6 +4,7 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
+import de.leonheuer.mcguiapi.gui.GUIFactory
 import de.skycave.shoprotation.codecs.ChestCodecProvider
 import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
 import de.skycave.shoprotation.codecs.LocationCodec
@@ -22,6 +23,10 @@ class ShopRotation : SkyCavePlugin() {
 
     val messages = MessageRegistry(this)
 
+    companion object {
+        const val MASTER_VOLUME = 1.0f
+    }
+
     lateinit var mongoClient: MongoClient
         private set
     lateinit var chestItems: MongoCollection<ChestItems>
@@ -31,8 +36,14 @@ class ShopRotation : SkyCavePlugin() {
     lateinit var rewards: MongoCollection<Rewards>
         private set
 
+    lateinit var guiFactory: GUIFactory
+        private set
+
     override fun onEnable() {
         super.onEnable()
+
+        guiFactory = GUIFactory(this)
+
         val registry = CodecRegistries.fromRegistries(
             CodecRegistries.fromCodecs(LocationCodec()),
             CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider(), RewardsCodecProvider())
@@ -92,6 +103,8 @@ class ShopRotation : SkyCavePlugin() {
 
             //items messages
             "current-item" to "&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)"
+
+            //TODO: Add reward - lootpool messages
         )
         this.messages.registerMany(messages)
     }
