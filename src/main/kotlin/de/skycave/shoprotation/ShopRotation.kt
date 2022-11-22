@@ -35,7 +35,6 @@ class ShopRotation : SkyCavePlugin() {
         private set
     lateinit var rewards: MongoCollection<Rewards>
         private set
-
     lateinit var guiFactory: GUIFactory
         private set
 
@@ -106,8 +105,7 @@ class ShopRotation : SkyCavePlugin() {
 
             //reward messages
             "load-rewards-error" to "&cUnable to Load REWARD - DB.",
-            "addhand-to-rewards-success" to "&eDas Item (&f&o%material&e,&f&o%amount&e) wurde erfolgreich bei &fBelohnungen &ehinzugefügt."
-
+            "add-item-to-rewards-success" to "&eDas Item (&f&o%material&e,&f&o%amount&e) wurde erfolgreich bei &fBelohnungen &ehinzugefügt."
 
             //lootpool messages
             //TODO: Add reward - lootpool messages
