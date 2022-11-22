@@ -61,7 +61,7 @@ class ShopRotation : SkyCavePlugin() {
     }
 
     override fun onDisable() {
-        super.onDisable()
+        mongoClient.close()
     }
 
     private fun registerMessages() {
@@ -102,8 +102,14 @@ class ShopRotation : SkyCavePlugin() {
             "set-disabled-syntax" to "&e/shoprotation disable <all/name>",
 
             //items messages
-            "current-item" to "&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)"
+            "current-item" to "&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)",
 
+            //reward messages
+            "load-rewards-error" to "&cUnable to Load REWARD - DB.",
+            "addhand-to-rewards-success" to "&eDas Item (&f&o%material&e,&f&o%amount&e) wurde erfolgreich bei &fBelohnungen &ehinzugefügt."
+
+
+            //lootpool messages
             //TODO: Add reward - lootpool messages
         )
         this.messages.registerMany(messages)
