@@ -74,7 +74,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     sendHelp(sender)
                     return true
                 }
-                return ShopRotationLootpool().apply(sender, args)
+                return ShopRotationLootpoolCommand().apply(sender, args)
             }
             "rewards" -> {
                 if(args.size < 2) {

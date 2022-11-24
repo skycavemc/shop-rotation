@@ -22,11 +22,9 @@ object Utils {
             setPresetItems(player, view)
         }
 
+
         when (view) {
 
-            GUIView.REWARDS_REMOVE -> {
-
-            }
             GUIView.LOOTPOOL -> {
 
             }
@@ -50,20 +48,19 @@ object Utils {
                 setPresetItems(player, view)
 
                 val filter = Filters.eq("name", name)
-
                 val rewards = main.rewards.find(filter).first()
                 if(rewards != null) {
                     val rewardlist = rewards.rewardlist.entries
                     var slot = 9
                     for((material, amount) in rewardlist) {
                         if(slot.mod(9) == 0) {
-                            slot ++
+                            slot++
                         } else if((slot + 1).mod(9) == 0) {
                             slot += 2
                         }
                         val item = ItemBuilder.of(material)
                             .amount(amount)
-                            .name("&f&n${material}, $amount")
+                            .name("&f&nItem&f: &e${material}&f, &nAnzahl&f: &e$amount")
                             .asItem()
                         item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                         gui.setItem(slot, item)
@@ -79,20 +76,19 @@ object Utils {
                 setPresetItems(player, view)
 
                 val filter = Filters.eq("name", name)
-
                 val rewards = main.rewards.find(filter).first()
                 if(rewards != null) {
                     val rewardlist = rewards.rewardlist.entries
                     var slot = 9
                     for((material, amount) in rewardlist) {
                         if(slot.mod(9) == 0) {
-                            slot ++
+                            slot++
                         } else if((slot + 1).mod(9) == 0) {
                             slot += 2
                         }
                         val item = ItemBuilder.of(material)
                             .amount(amount)
-                            .name("&f&n${material}, $amount")
+                            .name("&f&nItem&f: &e${material}&f, &nAnzahl&f: &e$amount")
                             .description("&7Zum Entfernen klicken!")
                             .asItem()
                         item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
@@ -112,6 +108,84 @@ object Utils {
             }
         }
 
+    }
+
+    fun openGUILootpool(player: Player, view: GUIView, args: Array<out String>) {
+        when (view) {
+            GUIView.LOOTPOOL -> {
+                val name = args[2]
+
+                val gui = main.guiFactory.createGUI(6, view.getTitle())
+                setPresetItems(player, view)
+
+                val filter = Filters.eq("name", name)
+                val chestItems = main.chestItems.find(filter).first()
+                if(chestItems != null) {
+                    val chestitemslist = chestItems.items.entries
+                    var slot = 9
+                    for((material, amount) in chestitemslist) {
+                        if(slot.mod(9) == 0) {
+                            slot++
+                        } else if((slot + 1).mod(9) == 0) {
+                            slot += 2
+                        }
+                        var amountfinal = amount
+                        if(amount > 64) {
+                            amountfinal = 64
+                        }
+                        val item = ItemBuilder.of(material)
+                            .amount(amountfinal)
+                            .name("&f&nItem&f: &e${material}&f, &nBenötigte Menge&f: &e$amountfinal")
+                            .asItem()
+                        item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+                        gui.setItem(slot, item)
+                    }
+                }
+                gui.show(player)
+                return
+            }
+            GUIView.LOOTPOOL_REMOVE -> {
+                val name = args[2]
+
+                val gui = main.guiFactory.createGUI(6, view.getTitle())
+                setPresetItems(player, view)
+
+                val filter = Filters.eq("name", name)
+                val chestItems = main.chestItems.find(filter).first()
+                if(chestItems != null) {
+                    val chestitemslist = chestItems.items.entries
+                    var slot = 9
+                    for((material, amount) in chestitemslist) {
+                        if(slot.mod(9) == 0) {
+                            slot++
+                        } else if((slot + 1).mod(9) == 0) {
+                            slot += 2
+                        }
+                        var amountfinal = amount
+                        if(amount > 64) {
+                            amountfinal = 64
+                        }
+                        val item = ItemBuilder.of(material)
+                            .amount(amountfinal)
+                            .name("&f&nItem&f: &e${material}&f, &nBenötigte Menge&f: &e$amount")
+                            .description("&7Zum Entfernen klicken!")
+                            .asItem()
+                        item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+                        gui.setItem(slot, item) {
+                            chestItems.items.remove(material)
+                            openGUILootpool(player, view, args)
+                            return@setItem
+                        }
+                    }
+                }
+                gui.show(player)
+                return
+            }
+            else -> {
+                main.messages.get("unknown-inventory").send(player)
+                return
+            }
+        }
     }
 
     private fun setPresetItems(player: Player, view: GUIView) {

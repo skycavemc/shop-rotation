@@ -55,7 +55,6 @@ class ShopRotation : SkyCavePlugin() {
         rewards = db.getCollection("rewards", Rewards::class.java)
 
         registerCommand("shoprotation", ShopRotationCommand(this))
-        //registerCommand("shoprotation", ShopRotationSubCommand(this))
         registerEvents()
     }
 
