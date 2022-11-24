@@ -8,9 +8,7 @@ import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.Utils
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Item
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, Array<out String>, Boolean>  {
@@ -31,22 +29,15 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
 
                 val name = args[2].lowercase()
                 val filter = Filters.eq("name", name)
-                var rewards = main.rewards.find(filter).first()
+                val rewards = main.rewards.find(filter).first()
 
                 if(rewards != null) {
-                    rewards = Rewards()
-                    rewards.name = name
-
-                    //Create New HashMap to add handitem
-                    val rewardHashMap = HashMap<Material, Int>()
 
                     if (handitem.type != Material.AIR) {
-                        rewardHashMap[handitem.type] = handitem.amount
 
-                        //Add HashMap to Reward DB:
-                        rewards.rewardlist = rewardHashMap
-                        //Safe rewardlist in rewards db
-                        main.rewards.updateOne(Filters.eq("name", name), Updates.set("rewardlist", rewards.rewardlist))
+                        rewards.rewardlist[handitem.type] = handitem.amount
+
+                        main.rewards.replaceOne(Filters.eq("name", name), rewards)
                         main.messages.get("add-item-to-rewards-success")
                             .replace("%material", handitem.type.name)
                             .replace("%amount", handitem.amount.toString())
@@ -76,19 +67,15 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     return true
                 }
                 val filter = Filters.eq("name", name)
-                var rewards = main.rewards.find(filter).first()
+                val rewards = main.rewards.find(filter).first()
 
                 if(rewards != null) {
-                    rewards = Rewards()
-                    rewards.name = name
 
-                    val rewardHashMap = HashMap<Material, Int>()
                     if (material != null) {
-                        rewardHashMap[material] = amount.toInt()
+                        rewards.rewardlist[material] = amount.toInt()
                     }
-                    rewards.rewardlist = rewardHashMap
 
-                    main.rewards.updateOne(Filters.eq("name", name), Updates.set("rewardlist", rewards.rewardlist))
+                    main.rewards.replaceOne(Filters.eq("name", name), rewards)
                     main.messages.get("add-item-to-rewards-success")
                         .replace("%material", material.toString())
                         .replace("%amount", amount)
@@ -97,14 +84,27 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 }
             }
             "remove" -> {
-
+                if(!sender.hasPermission("skybee.shoprotation.rewards.remove")) {
+                    main.messages.get("no-perms").send(sender)
+                    return true
+                }
+                if(args.size < 3) {
+                    main.messages.get("not-enough-arguments").send(sender)
+                    return true
+                }
+                Utils.openGUIRewards(sender, GUIView.REWARDS_REMOVE, args)
+                return true
             }
             "show" -> {
                 if(!sender.hasPermission("skybee.shoprotation.rewards.show")) {
                     main.messages.get("no-perms").send(sender)
                     return true
                 }
-                Utils.openGUI(sender, GUIView.REWARDS)
+                if(args.size < 3) {
+                    main.messages.get("not-enough-arguments").send(sender)
+                    return true
+                }
+                Utils.openGUIRewards(sender, GUIView.REWARDS, args)
                 return true
             }
             else -> {

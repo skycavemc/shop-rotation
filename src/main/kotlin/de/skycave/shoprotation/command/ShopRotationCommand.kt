@@ -204,14 +204,6 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             }
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
-
-        //"setlocation", "help", "remove", "chest", "enable", "disable", "opengui"
-
-        //items: get <all/index>
-        //items: add
-        //items: opengui
-        //items modify
-
         completions.sort()
         return completions
     }

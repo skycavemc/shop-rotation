@@ -3,20 +3,20 @@ package de.skycave.shoprotation.model
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import org.bukkit.Material
+import java.util.*
+import kotlin.collections.HashMap
 
 class Rewards {
 
     @BsonId
     lateinit var id: ObjectId
     lateinit var name: String
-    lateinit var rewardlist: Map<Material, Int>
+    var rewardlist: EnumMap<Material, Int> = EnumMap(org.bukkit.Material::class.java)
 
     constructor()
 
-    constructor(id: ObjectId, name: String, rewardlist: Map<Material, Int>) {
+    constructor(id: ObjectId, name: String) {
         this.id = id
         this.name = name
-        this.rewardlist = rewardlist
     }
-
 }

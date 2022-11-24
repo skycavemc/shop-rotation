@@ -72,6 +72,10 @@ class ShopRotation : SkyCavePlugin() {
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
 
+            //global shoprotation messages
+            "unknown-inventory" to "&cDas angefragte Inventar existiert nicht.",
+            "not-enough-arguments" to "&cZu wenige Argumente! Siehe /shoprotation help",
+
             //chest messages
             "chest-unknown" to "&cDie Chest %name wurde nicht gefunden.",
 

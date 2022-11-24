@@ -1,13 +1,14 @@
 package de.skycave.shoprotation.utils
 
+import com.mongodb.client.model.Filters
 import de.leonheuer.mcguiapi.gui.GUIPattern
 import de.leonheuer.mcguiapi.utils.ItemBuilder
 import de.skycave.shoprotation.ShopRotation
-import de.skycave.shoprotation.model.Rewards
 import de.skycave.shoprotation.model.display.CustomSound
 import de.skycave.shoprotation.model.display.GUIView
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.plugin.java.JavaPlugin
 
 object Utils {
@@ -18,54 +19,11 @@ object Utils {
         val gui = main.guiFactory.createGUI(6, view.getTitle())
 
         if(view != GUIView.MAIN) {
-            val pattern = GUIPattern.ofPattern("bbbbbbbbb")
-                .withMaterial('b', ItemBuilder.of(Material.CYAN_STAINED_GLASS_PANE).name("§0").asItem())
-            gui.formatPattern(pattern.startAtLine(1)).formatPattern(pattern.startAtLine(6))
-                .setItem(6,1, ItemBuilder.of(Material.ARROW).name("&cZurück").asItem()) {
-                    CustomSound.CLICK.playTo(player)
-                    openGUI(player, GUIView.MAIN)
-                }
-                //TODO: SET DESCRIPTIONS FOR ITEMS
-                .setItem(6,4, ItemBuilder.of(Material.NETHER_STAR).name("&dBelohnungen").asItem()) {
-                    if(!player.hasPermission("skybee.shoprotation.rewards.show")) {
-                        main.messages.get("no-perms").send(player)
-                        CustomSound.ERROR.playTo(player)
-                        return@setItem
-                    }
-                    CustomSound.CLICK.playTo(player)
-                    openGUI(player, GUIView.REWARDS)
-                }
-                .setItem(6, 5, ItemBuilder.of(Material.OAK_SIGN).name("&eHilfe!").asItem()) {
-                    sendHelp(player)
-                    player.closeInventory()
-                }
-                .setItem(6,6, ItemBuilder.of(Material.WHITE_SHULKER_BOX).name("&eZiele!").asItem()) {
-                    if(!player.hasPermission("skybee.shoprotation.lootpool.show")) {
-                        main.messages.get("no-perms").send(player)
-                        CustomSound.ERROR.playTo(player)
-                        return@setItem
-                    }
-                    CustomSound.CLICK.playTo(player)
-                    openGUI(player, GUIView.LOOTPOOL)
-                }
+            setPresetItems(player, view)
         }
 
         when (view) {
-            GUIView.REWARDS -> {
-                var rewards = main.rewards.find().first()
-                if(rewards != null) {
-                    rewards = Rewards()
-                    val rewardlist = rewards.rewardlist.entries
-                    var slot = 9
-                    for(r in rewardlist) {
-                        if(slot.mod(9) == 0) {
-                            slot ++
-                        } else if((slot + 1).mod(9) == 0) {
-                            slot += 2
-                        }
-                    }
-                }
-            }
+
             GUIView.REWARDS_REMOVE -> {
 
             }
@@ -78,8 +36,125 @@ object Utils {
             GUIView.MAIN -> {
 
             }
+            else -> {}
         }
         gui.show(player)
+    }
+
+    fun openGUIRewards(player: Player, view: GUIView, args: Array<out String>) {
+        when (view) {
+            GUIView.REWARDS -> {
+                val name = args[2]
+
+                val gui = main.guiFactory.createGUI(6, view.getTitle())
+                setPresetItems(player, view)
+
+                val filter = Filters.eq("name", name)
+
+                val rewards = main.rewards.find(filter).first()
+                if(rewards != null) {
+                    val rewardlist = rewards.rewardlist.entries
+                    var slot = 9
+                    for((material, amount) in rewardlist) {
+                        if(slot.mod(9) == 0) {
+                            slot ++
+                        } else if((slot + 1).mod(9) == 0) {
+                            slot += 2
+                        }
+                        val item = ItemBuilder.of(material)
+                            .amount(amount)
+                            .name("&f&n${material}, $amount")
+                            .asItem()
+                        item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+                        gui.setItem(slot, item)
+                    }
+                }
+                gui.show(player)
+                return
+            }
+            GUIView.REWARDS_REMOVE -> {
+                val name = args[2]
+
+                val gui = main.guiFactory.createGUI(6, view.getTitle())
+                setPresetItems(player, view)
+
+                val filter = Filters.eq("name", name)
+
+                val rewards = main.rewards.find(filter).first()
+                if(rewards != null) {
+                    val rewardlist = rewards.rewardlist.entries
+                    var slot = 9
+                    for((material, amount) in rewardlist) {
+                        if(slot.mod(9) == 0) {
+                            slot ++
+                        } else if((slot + 1).mod(9) == 0) {
+                            slot += 2
+                        }
+                        val item = ItemBuilder.of(material)
+                            .amount(amount)
+                            .name("&f&n${material}, $amount")
+                            .description("&7Zum Entfernen klicken!")
+                            .asItem()
+                        item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+                        gui.setItem(slot, item) {
+                            rewards.rewardlist.remove(material)
+                            openGUIRewards(player, view, args)
+                            return@setItem
+                        }
+                    }
+                }
+                gui.show(player)
+                return
+            }
+            else -> {
+                main.messages.get("unknown-inventory").send(player)
+                return
+            }
+        }
+
+    }
+
+    private fun setPresetItems(player: Player, view: GUIView) {
+        val gui = main.guiFactory.createGUI(6, view.getTitle())
+
+        val pattern = GUIPattern.ofPattern("bbbbbbbbb")
+            .withMaterial('b', ItemBuilder.of(Material.CYAN_STAINED_GLASS_PANE).name("§0").asItem())
+        gui.formatPattern(pattern.startAtLine(1)).formatPattern(pattern.startAtLine(6))
+            .setItem(6,1, ItemBuilder.of(Material.ARROW).name("&cZurück").asItem()) {
+                CustomSound.CLICK.playTo(player)
+                openGUI(player, GUIView.MAIN)
+            }
+            .setItem(6,4, ItemBuilder.of(Material.NETHER_STAR)
+                .name("&dBelohnungen")
+                .description("&7Zeigt alle möglichen Belohnungen an!")
+                .asItem()) {
+                if(!player.hasPermission("skybee.shoprotation.rewards.show")) {
+                    main.messages.get("no-perms").send(player)
+                    CustomSound.ERROR.playTo(player)
+                    return@setItem
+                }
+                CustomSound.CLICK.playTo(player)
+                openGUI(player, GUIView.REWARDS)
+            }
+            .setItem(6, 5, ItemBuilder.of(Material.OAK_SIGN)
+                .name("&eHilfe!")
+                .description("&7Zeigt eine Hilfe an!")
+                .asItem()) {
+                sendHelp(player)
+                player.closeInventory()
+            }
+            .setItem(6,6, ItemBuilder.of(Material.WHITE_SHULKER_BOX)
+                .name("&eZiele!")
+                .description("&7Zeigt alle Ziele an, welche erreicht werden können!")
+                .asItem()) {
+                if(!player.hasPermission("skybee.shoprotation.lootpool.show")) {
+                    main.messages.get("no-perms").send(player)
+                    CustomSound.ERROR.playTo(player)
+                    return@setItem
+                }
+                CustomSound.CLICK.playTo(player)
+                openGUI(player, GUIView.LOOTPOOL)
+            }
     }
 
     private fun sendHelp(player: Player) {
