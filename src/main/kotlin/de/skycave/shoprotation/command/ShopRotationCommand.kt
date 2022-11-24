@@ -4,7 +4,9 @@ import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.Chest
+import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.Formatting
+import de.skycave.shoprotation.utils.Utils
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -61,7 +63,9 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 return true
             }
             "opengui" -> {
-
+                if(sender is Player) {
+                    Utils.openGUI(sender, GUIView.MAIN)
+                }
             }
             "remove" -> {
 
@@ -190,6 +194,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             when (args[0].lowercase()) {
                 "chest" -> {
                     arguments = listOf("get", "getall", "current")
+                    //TODO: WHAT THE F DID I DO HERE?? CHECK IT MF! @ME
                 }
                 "remove" -> {
                     val chests = main.chests.find()
@@ -201,6 +206,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 "rewards" -> {
                     arguments = listOf("addhanditem", "add", "remove", "show")
                 }
+                //TODO: ADD Material TabCompleter!
             }
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }

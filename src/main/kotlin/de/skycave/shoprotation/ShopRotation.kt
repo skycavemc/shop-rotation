@@ -68,6 +68,7 @@ class ShopRotation : SkyCavePlugin() {
             "no-perms" to "&cDu hast keine Rechte für diesen Befehl.",
             "invalid-number" to "&c%number ist keine gültige Zahl.",
             "invalid-material" to "&cBitte gib ein gültiges Material an.",
+            //TODO: Add Invalid-material messages in Plugin
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
 
@@ -107,11 +108,12 @@ class ShopRotation : SkyCavePlugin() {
             "current-item" to "&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)",
 
             //reward messages
-            "load-rewards-error" to "&cUnable to Load REWARD - DB.",
-            "add-item-to-rewards-success" to "&eDas Item (&f&o%material&e,&f&o%amount&e) wurde erfolgreich bei &fBelohnungen &ehinzugefügt."
+            "load-rewards-error" to "&cUnable to load REWARD - DB.",
+            "add-item-to-rewards-success" to "&eDas Item (&f&o%material&e, &f&o%amount&e) wurde erfolgreich bei &fBelohnungen &ehinzugefügt.",
 
             //lootpool messages
-            //TODO: Add reward - lootpool messages
+            "load-lootpool-error" to "&cUnable to load LOOTPOOL (ChestItems) - DB.",
+            "add-item-to-lootpool-success" to "&eDas Item (&f&o%material&e, &f&o%amount&e) wurde erfolgreich bei &fZiele &ehinzugefügt."
         )
         this.messages.registerMany(messages)
     }

@@ -1,9 +1,7 @@
 package de.skycave.shoprotation.command
 
 import com.mongodb.client.model.Filters
-import com.mongodb.client.model.Updates
 import de.skycave.shoprotation.ShopRotation
-import de.skycave.shoprotation.model.Rewards
 import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.Utils
 import org.bukkit.Material
@@ -23,6 +21,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
         when (args[1].lowercase()) {
             "addhanditem" -> {
                 if(!sender.hasPermission("skybee.shoprotation.rewards.add")) {
+                    main.messages.get("no-perms").send(sender)
                     return true
                 }
                 val handitem = sender.inventory.itemInMainHand
@@ -32,7 +31,6 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 val rewards = main.rewards.find(filter).first()
 
                 if(rewards != null) {
-
                     if (handitem.type != Material.AIR) {
 
                         rewards.rewardlist[handitem.type] = handitem.amount
@@ -51,6 +49,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
             }
             "add" -> {
                 if(!sender.hasPermission("skybee.shoprotation.rewards.add")) {
+                    main.messages.get("no-perms").send(sender)
                     return true
                 }
                 val name = args[2].lowercase()
@@ -70,11 +69,9 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 val rewards = main.rewards.find(filter).first()
 
                 if(rewards != null) {
-
                     if (material != null) {
                         rewards.rewardlist[material] = amount.toInt()
                     }
-
                     main.rewards.replaceOne(Filters.eq("name", name), rewards)
                     main.messages.get("add-item-to-rewards-success")
                         .replace("%material", material.toString())
