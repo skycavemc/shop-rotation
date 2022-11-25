@@ -9,6 +9,7 @@ import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
 import org.bson.codecs.configuration.CodecRegistry
 import org.bukkit.Material
+import java.util.*
 
 class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
     private val rewardsCodec: Codec<Rewards>
@@ -47,7 +48,7 @@ class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
                 "_id" -> rewards.id = reader.readObjectId()
                 "name" -> rewards.name = reader.readString()
                 "rewardlist" -> {
-                    val rewardlist = HashMap<Material, Int>()
+                    val rewardlist = EnumMap<Material, Int>(org.bukkit.Material::class.java)
                     while (reader.readBsonType() == BsonType.DOCUMENT) {
                         val type = Material.valueOf(reader.readName())
                         rewardlist[type] = reader.readInt32()

@@ -221,8 +221,6 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             }
             StringUtil.copyPartialMatches(args[3], arguments, completions)
         }
-
-
         completions.sort()
         return completions
     }
