@@ -8,6 +8,8 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, Array<out String>, Boolean> {
 
@@ -52,13 +54,18 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
                 }
                 val name = args[2].lowercase()
 
-                val material = Material.getMaterial(args[3].lowercase())
+                val materialtoCheck = args[3].lowercase()
                 val amount = args[4].lowercase()
 
                 if(!isNumeric(amount)) {
                     main.messages.get("invalid-number").send(sender)
                     return true
                 }
+                if(!isMaterial(materialtoCheck)) {
+                    main.messages.get("invalid-material").send(sender)
+                    return true
+                }
+                val material = Material.getMaterial(args[3].lowercase())
                 if(material == Material.AIR) {
                     main.messages.get("invalid-material").send(sender)
                     return true
@@ -113,5 +120,14 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
     private fun isNumeric(toCheck: String): Boolean {
         val regex = "[0-9]".toRegex()
         return toCheck.matches(regex)
+    }
+
+    private fun isMaterial(toCheck: String): Boolean {
+        for(material in Material.values()) {
+            if(material.toString() == toCheck) {
+                return true
+            }
+        }
+        return false
     }
 }

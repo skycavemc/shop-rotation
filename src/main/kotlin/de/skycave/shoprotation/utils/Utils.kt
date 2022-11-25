@@ -22,19 +22,8 @@ object Utils {
             setPresetItems(player, view)
         }
 
+        if(view == GUIView.MAIN) {
 
-        when (view) {
-
-            GUIView.LOOTPOOL -> {
-
-            }
-            GUIView.LOOTPOOL_REMOVE -> {
-
-            }
-            GUIView.MAIN -> {
-
-            }
-            else -> {}
         }
         gui.show(player)
     }
@@ -107,7 +96,6 @@ object Utils {
                 return
             }
         }
-
     }
 
     fun openGUILootpool(player: Player, view: GUIView, args: Array<out String>) {

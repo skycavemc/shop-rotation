@@ -7,6 +7,7 @@ import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.Formatting
 import de.skycave.shoprotation.utils.Utils
+import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -180,6 +181,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         main.messages.get("chest-enable").send(sender)
         main.messages.get("chest-disable").send(sender)
         main.messages.get("chest-help").send(sender)
+        //TODO:Add missing messages to help command
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): MutableList<String> {
@@ -206,10 +208,21 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 "rewards" -> {
                     arguments = listOf("addhanditem", "add", "remove", "show")
                 }
-                //TODO: ADD Material TabCompleter!
             }
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
+        if(args.size == 4) {
+            if(args[1].lowercase() == "add" && (args[0].lowercase() == "lootpool" || args[0].lowercase() == "rewards")) {
+                val materiallist = emptyList<String>()
+                for(material in Material.values()) {
+                    materiallist.toMutableList().add(material.toString())
+                }
+                arguments = materiallist
+            }
+            StringUtil.copyPartialMatches(args[3], arguments, completions)
+        }
+
+
         completions.sort()
         return completions
     }

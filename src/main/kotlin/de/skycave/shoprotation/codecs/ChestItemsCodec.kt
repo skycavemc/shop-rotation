@@ -11,6 +11,7 @@ import org.bson.codecs.configuration.CodecRegistry
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import kotlin.collections.HashMap
 
 class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
     private val itemStackCodec: Codec<ItemStack>
@@ -50,7 +51,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
                 "_id" -> chestitems.id = reader.readObjectId()
                 "name" -> chestitems.name = reader.readString()
                 "items" -> {
-                    val items = EnumMap<Material, Int>()
+                    val items = HashMap<Material, Int>()
                     while (reader.readBsonType() == BsonType.DOCUMENT) {
                         reader.readStartDocument()
                         val type = Material.valueOf(reader.readName())

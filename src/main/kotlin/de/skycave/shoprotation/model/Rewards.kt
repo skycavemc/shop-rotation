@@ -4,7 +4,6 @@ import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import org.bukkit.Material
 import java.util.*
-import kotlin.collections.HashMap
 
 class Rewards {
 

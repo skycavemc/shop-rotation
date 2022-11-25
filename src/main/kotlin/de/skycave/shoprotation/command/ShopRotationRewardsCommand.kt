@@ -54,6 +54,11 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 }
                 val name = args[2].lowercase()
 
+                val materialtoCheck = args[3].lowercase()
+                if(!isMaterial(materialtoCheck)) {
+                    main.messages.get("invalid-material").send(sender)
+                    return true
+                }
                 val material = Material.getMaterial(args[3].lowercase())
                 val amount = args[4].lowercase()
 
@@ -115,5 +120,14 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
     private fun isNumeric(toCheck: String): Boolean {
         val regex = "[0-9]".toRegex()
         return toCheck.matches(regex)
+    }
+
+    private fun isMaterial(toCheck: String): Boolean {
+        for(material in Material.values()) {
+            if(material.toString() == toCheck) {
+                return true
+            }
+        }
+        return false
     }
 }
