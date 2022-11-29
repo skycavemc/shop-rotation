@@ -13,9 +13,11 @@ import de.skycave.shoprotation.command.ShopRotationCommand
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.shoprotation.model.Rewards
+import de.skycave.skycavelib.annotations.InjectService
 import de.skycave.skycavelib.annotations.Prefix
 import de.skycave.skycavelib.data.MessageRegistry
 import de.skycave.skycavelib.models.SkyCavePlugin
+import net.milkbowl.vault.economy.Economy
 import org.bson.codecs.configuration.CodecRegistries
 
 @Prefix("&fSky&3Cave &8» ")
@@ -38,6 +40,10 @@ class ShopRotation : SkyCavePlugin() {
     lateinit var guiFactory: GUIFactory
         private set
 
+    @field:InjectService
+    lateinit var economy: Economy
+        private set
+
     override fun onEnable() {
         super.onEnable()
 
@@ -45,7 +51,8 @@ class ShopRotation : SkyCavePlugin() {
 
         val registry = CodecRegistries.fromRegistries(
             CodecRegistries.fromCodecs(LocationCodec()),
-            CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider(), RewardsCodecProvider())
+            CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider(), RewardsCodecProvider()),
+            MongoClientSettings.getDefaultCodecRegistry(),
         )
         val settings = MongoClientSettings.builder().codecRegistry(registry).build()
         mongoClient = MongoClients.create(settings)
@@ -56,6 +63,7 @@ class ShopRotation : SkyCavePlugin() {
 
         registerCommand("shoprotation", ShopRotationCommand(this))
         registerEvents()
+        registerMessages()
     }
 
     override fun onDisable() {

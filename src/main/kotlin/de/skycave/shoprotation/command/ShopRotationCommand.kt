@@ -65,7 +65,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             }
             "opengui" -> {
                 if(sender is Player) {
-                    Utils.openGUI(sender, GUIView.MAIN)
+                    Utils.openGUI(sender, GUIView.MAIN, args)
                 }
             }
             "remove" -> {

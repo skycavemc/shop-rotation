@@ -49,11 +49,12 @@ class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
                 "name" -> rewards.name = reader.readString()
                 "rewardlist" -> {
                     val rewardlist = EnumMap<Material, Int>(org.bukkit.Material::class.java)
-                    while (reader.readBsonType() == BsonType.DOCUMENT) {
+                    reader.readStartDocument()
+                    while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
                         val type = Material.valueOf(reader.readName())
                         rewardlist[type] = reader.readInt32()
-                        reader.readEndDocument()
                     }
+                    reader.readEndDocument()
                     rewards.rewardlist = rewardlist
                 }
                 else -> reader.skipValue()

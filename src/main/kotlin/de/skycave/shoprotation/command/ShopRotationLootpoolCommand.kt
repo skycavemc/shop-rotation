@@ -3,13 +3,11 @@ package de.skycave.shoprotation.command
 import com.mongodb.client.model.Filters
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.display.GUIView
-import de.skycave.shoprotation.utils.Utils
+import de.skycave.shoprotation.utils.UtilsChestItems
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.*
-import kotlin.collections.ArrayList
 
 class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, Array<out String>, Boolean> {
 
@@ -94,7 +92,7 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                Utils.openGUILootpool(sender, GUIView.LOOTPOOL_REMOVE, args)
+                UtilsChestItems.openGUIChestItems(sender, GUIView.LOOTPOOL_REMOVE, args)
                 return true
             }
             "show" -> {
@@ -106,7 +104,7 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                Utils.openGUILootpool(sender, GUIView.LOOTPOOL, args)
+                UtilsChestItems.openGUIChestItems(sender, GUIView.LOOTPOOL, args)
                 return true
             }
             else -> {
