@@ -49,6 +49,8 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     chest.name = name
                     chest.location = player.location
 
+                    main.
+
                     main.chests.insertOne(chest)
                     main.messages.get("chest-created-success")
                         .replace("%name", name)

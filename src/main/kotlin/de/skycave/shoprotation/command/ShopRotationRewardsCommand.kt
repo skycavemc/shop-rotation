@@ -24,14 +24,14 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
         }
         when (args[1].lowercase()) {
             "addhanditem" -> {
-                if(!sender.hasPermission("skybee.shoprotation.rewards.add")) {
+                if(!sender.hasPermission("skybee.shoprotation.admin")) {
                     main.messages.get("no-perms").send(sender)
                     return true
                 }
                 val handitem = sender.inventory.itemInMainHand
 
                 if (handitem.type == Material.AIR) {
-                    //TODO: Message - NO AIR
+                    main.messages.get("material-air-not-allowed").send(sender)
                     return true
                 }
 
@@ -60,7 +60,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
 
             }
             "add" -> {
-                if(!sender.hasPermission("skybee.shoprotation.rewards.add")) {
+                if(!sender.hasPermission("skybee.shoprotation.admin")) {
                     main.messages.get("no-perms").send(sender)
                     return true
                 }
@@ -79,26 +79,28 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     return true
                 }
                 if(material == Material.AIR) {
-                    main.messages.get("invalid-material").send(sender)
+                    main.messages.get("material-air-not-allowed").send(sender)
                     return true
                 }
                 val filter = Filters.eq("name", name)
-                val rewards = main.rewards.find(filter).first()
+                var rewards = main.rewards.find(filter).first()
 
-                if(rewards != null) {
-                    if (material != null) {
-                        rewards.rewardlist[material] = amount.toInt()
-                    }
-                    main.rewards.replaceOne(Filters.eq("name", name), rewards)
-                    main.messages.get("add-item-to-rewards-success")
-                        .replace("%material", material.toString())
-                        .replace("%amount", amount)
-                        .send(sender)
-                    return true
+                if(rewards == null) {
+                    rewards = Rewards()
+                    rewards.name = name
+                    rewards.rewardlist = EnumMap(Material::class.java)
+                    main.rewards.insertOne(rewards)
                 }
+                rewards.rewardlist[material] = amount.toInt()
+
+                main.rewards.replaceOne(Filters.eq("name", name), rewards)
+                main.messages.get("add-item-to-rewards-success")
+                    .replace("%material", material.toString())
+                    .replace("%amount", amount)
+                    .send(sender)
             }
             "remove" -> {
-                if(!sender.hasPermission("skybee.shoprotation.rewards.remove")) {
+                if(!sender.hasPermission("skybee.shoprotation.admin")) {
                     main.messages.get("no-perms").send(sender)
                     return true
                 }

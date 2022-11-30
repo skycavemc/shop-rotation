@@ -2,8 +2,10 @@ package de.skycave.shoprotation.utils
 
 import com.mongodb.client.model.Filters
 import de.leonheuer.mcguiapi.gui.GUI
+import de.leonheuer.mcguiapi.gui.GUIPattern
 import de.leonheuer.mcguiapi.utils.ItemBuilder
 import de.skycave.shoprotation.ShopRotation
+import de.skycave.shoprotation.model.display.CustomSound
 import de.skycave.shoprotation.model.display.GUIView
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -16,8 +18,7 @@ object UtilsRewards {
 
     fun openGUIRewards(player: Player, view: GUIView, args: Array<out String>) {
         val gui = main.guiFactory.createGUI(6, view.getTitle())
-        Utils.setPresetBorder(player, gui, Material.ORANGE_STAINED_GLASS_PANE)
-        Utils.setPresetItems(player, gui, Material.ORANGE_STAINED_GLASS_PANE, args)
+        setPresetRewards(player, gui, Material.ORANGE_STAINED_GLASS_PANE)
 
         when (view) {
             GUIView.REWARDS -> {
@@ -81,5 +82,23 @@ object UtilsRewards {
         }
     }
 
+    private fun setPresetRewards(player: Player, gui: GUI, material: Material) {
+        val pattern = GUIPattern.ofPattern("bbbbbbbbb")
+            .withMaterial('b', ItemBuilder.of(material).name("§0").asItem())
+        gui.formatPattern(pattern.startAtLine(1)).formatPattern(pattern.startAtLine(6))
+            .setItem(6,1, ItemBuilder.of(Material.ARROW).name("&cZurück").asItem()) {
+                CustomSound.CLICK.playTo(player)
+                Utils.openGUI(player, GUIView.MAIN)
+            }
 
+        var slot = 9
+        while(slot < 54) {
+            if(slot.mod(9) == 0) {
+                gui.setItem(slot, ItemBuilder.of(material).name("§0").asItem())
+            } else if(slot == 17 || slot == 26 || slot == 35 || slot == 44) {
+                gui.setItem(slot, ItemBuilder.of(material).name("§0").asItem())
+            }
+            slot++
+        }
+    }
 }

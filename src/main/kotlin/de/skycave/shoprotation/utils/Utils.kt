@@ -17,12 +17,12 @@ object Utils {
     fun openGUI(player: Player, view: GUIView, args: Array<out String>) {
         if(view == GUIView.MAIN) {
             //TODO: Main GUI Inventory here
-            val gui = main.guiFactory.createGUI(6, view.getTitle())
-            setPresetItems(player, gui, Material.CYAN_STAINED_GLASS_PANE, args)
+            val gui = main.guiFactory.createGUI(6, GUIView.MAIN.toString())
+            setPresetMain(player, gui, Material.CYAN_STAINED_GLASS_PANE, args)
         }
     }
 
-    fun setPresetItems(player: Player, gui: GUI, material: Material, args: Array<out String>) {
+    private fun setPresetMain(player: Player, gui: GUI, material: Material, args: Array<out String>) {
         val pattern = GUIPattern.ofPattern("bbbbbbbbb")
             .withMaterial('b', ItemBuilder.of(material).name("§0").asItem())
         gui.formatPattern(pattern.startAtLine(1)).formatPattern(pattern.startAtLine(6))
@@ -30,7 +30,6 @@ object Utils {
             .setItem(6,1, ItemBuilder.of(Material.ARROW).name("&cZurück").asItem()) {
                 CustomSound.CLICK.playTo(player)
                 openGUI(player, GUIView.MAIN, args)
-                println("OPEN GUI MAIN")
             }
 
             .setItem(6,4, ItemBuilder.of(Material.NETHER_STAR)
@@ -44,7 +43,6 @@ object Utils {
                 }
                 CustomSound.CLICK.playTo(player)
                 UtilsRewards.openGUIRewards(player, GUIView.REWARDS, args)
-                println("OPEN GUI REWARDS")
             }
 
             .setItem(6, 5, ItemBuilder.of(Material.OAK_SIGN)
@@ -66,7 +64,6 @@ object Utils {
                 }
                 CustomSound.CLICK.playTo(player)
                 UtilsChestItems.openGUIChestItems(player, GUIView.LOOTPOOL, args)
-                println("OPEN GUI CHESTITEMS")
             }
     }
 

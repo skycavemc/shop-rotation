@@ -13,12 +13,14 @@ import de.skycave.shoprotation.command.ShopRotationCommand
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.shoprotation.model.Rewards
+import de.skycave.shoprotation.utils.Formatting
 import de.skycave.skycavelib.annotations.InjectService
 import de.skycave.skycavelib.annotations.Prefix
 import de.skycave.skycavelib.data.MessageRegistry
 import de.skycave.skycavelib.models.SkyCavePlugin
 import net.milkbowl.vault.economy.Economy
 import org.bson.codecs.configuration.CodecRegistries
+import org.bukkit.Location
 
 @Prefix("&fSky&3Cave &8» ")
 class ShopRotation : SkyCavePlugin() {
@@ -28,6 +30,8 @@ class ShopRotation : SkyCavePlugin() {
     companion object {
         const val MASTER_VOLUME = 1.0f
     }
+
+    val saveChest = HashMap<String, Location>()
 
     lateinit var mongoClient: MongoClient
         private set
@@ -62,6 +66,9 @@ class ShopRotation : SkyCavePlugin() {
         rewards = db.getCollection("rewards", Rewards::class.java)
 
         registerCommand("shoprotation", ShopRotationCommand(this))
+
+        for(location in )
+
         registerEvents()
         registerMessages()
     }
@@ -76,6 +83,7 @@ class ShopRotation : SkyCavePlugin() {
             "no-perms" to "&cDu hast keine Rechte für diesen Befehl.",
             "invalid-number" to "&c%number ist keine gültige Zahl.",
             "invalid-material" to "&cBitte gib ein gültiges Material an.",
+            "material-air-not-allowed" to "&cDas Material \"AIR\" ist nicht erlaubt.",
             //TODO: Add Invalid-material messages in Plugin
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
