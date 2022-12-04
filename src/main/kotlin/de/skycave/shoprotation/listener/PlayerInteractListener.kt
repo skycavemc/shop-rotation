@@ -1,4 +1,4 @@
-package de.skycave.shoprotation.Listener
+package de.skycave.shoprotation.listener
 
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.utils.Utils

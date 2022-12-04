@@ -4,10 +4,8 @@ import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.Chest
-import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.Formatting
 import de.skycave.shoprotation.utils.Utils
-import it.unimi.dsi.fastutil.ints.IntLists
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -15,8 +13,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
-import org.junit.internal.matchers.Each
-import kotlin.collections.ArrayList
 
 class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -51,7 +47,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     chest.name = name
                     chest.location = player.location.toString()
 
-                    main.
+                    main.registerChests()
 
                     main.chests.insertOne(chest)
                     main.registerChests()
@@ -70,7 +66,8 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             }
             "opengui" -> {
                 if(sender is Player) {
-                    Utils.openGUI(sender, GUIView.MAIN, args)
+                    val name = args[1]
+                    Utils.openGUIMain(sender, name)
                 }
             }
             "remove" -> {
@@ -163,11 +160,11 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
     }
 
     @Suppress("SameParameterValue")
-    private fun checkConditions(playeronly: Boolean, permission: String?, sender: CommandSender) : Boolean {
+    private fun checkConditions(playeronly: Boolean, permission: String?, sender: CommandSender): Boolean {
         if(playeronly) {
             if(sender !is Player) {
                 main.messages.get("no-player").send(sender)
-                return sender is Player
+                return false
             }
             if(permission != null && !sender.hasPermission(permission)) {
                 main.messages.get("no-perms").send(sender)

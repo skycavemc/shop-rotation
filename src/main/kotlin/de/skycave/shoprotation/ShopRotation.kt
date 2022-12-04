@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import de.leonheuer.mcguiapi.gui.GUIFactory
-import de.skycave.shoprotation.Listener.PlayerInteractListener
+import de.skycave.shoprotation.listener.PlayerInteractListener
 import de.skycave.shoprotation.codecs.ChestCodecProvider
 import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
 import de.skycave.shoprotation.codecs.LocationCodec
@@ -22,8 +22,6 @@ import de.skycave.skycavelib.models.SkyCavePlugin
 import net.milkbowl.vault.economy.Economy
 import org.bson.codecs.configuration.CodecRegistries
 import org.bukkit.Location
-import org.bukkit.event.player.PlayerInteractEvent
-import java.text.Normalizer.Form
 
 @Prefix("&fSky&3Cave &8» ")
 class ShopRotation : SkyCavePlugin() {

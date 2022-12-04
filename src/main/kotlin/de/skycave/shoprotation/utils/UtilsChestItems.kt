@@ -16,7 +16,6 @@ object UtilsChestItems {
     fun openGUIChestItems(player: Player, view: GUIView, args: Array<out String>) {
         val gui = main.guiFactory.createGUI(6, view.getTitle())
         Utils.setPresetBorder(gui, Material.PINK_STAINED_GLASS_PANE)
-        Utils.setPresetItems(player, gui, Material.PINK_STAINED_GLASS_PANE, args)
 
         when (view) {
             GUIView.LOOTPOOL -> {
@@ -85,5 +84,9 @@ object UtilsChestItems {
                 return
             }
         }
+    }
+
+    fun openGUIChestItems(player: Player, view: GUIView, name: String) {
+
     }
 }

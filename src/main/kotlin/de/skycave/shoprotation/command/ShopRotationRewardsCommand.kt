@@ -4,14 +4,12 @@ import com.mongodb.client.model.Filters
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.Rewards
 import de.skycave.shoprotation.model.display.GUIView
-import de.skycave.shoprotation.utils.Utils
 import de.skycave.shoprotation.utils.UtilsRewards
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, Array<out String>, Boolean>  {
 
@@ -60,8 +58,6 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
 
             }
             "add" -> {
-
-
                 val materialtoCheck = args[2].lowercase()
                 if(!isMaterial(materialtoCheck)) {
                     main.messages.get("invalid-material").send(sender)
@@ -104,7 +100,8 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                UtilsRewards.openGUIRewards(sender, GUIView.REWARDS_REMOVE, args)
+                val name = args[2]
+                UtilsRewards.openGUIRewards(sender, GUIView.REWARDS_REMOVE, name)
                 return true
             }
             "show" -> {
@@ -116,7 +113,8 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                UtilsRewards.openGUIRewards(sender, GUIView.REWARDS, args)
+                val name = args[2]
+                UtilsRewards.openGUIRewards(sender, GUIView.REWARDS, name)
                 return true
             }
             else -> {

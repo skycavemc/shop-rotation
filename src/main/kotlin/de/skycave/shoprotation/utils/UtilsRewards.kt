@@ -1,7 +1,6 @@
 package de.skycave.shoprotation.utils
 
 import com.mongodb.client.model.Filters
-import de.leonheuer.mcguiapi.gui.GUI
 import de.leonheuer.mcguiapi.utils.ItemBuilder
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.display.GUIView
@@ -14,14 +13,12 @@ object UtilsRewards {
 
     private val main = JavaPlugin.getPlugin(ShopRotation::class.java)
 
-    fun openGUIRewards(player: Player, view: GUIView, args: Array<out String>) {
+    fun openGUIRewards(player: Player, view: GUIView, name: String) {
         val gui = main.guiFactory.createGUI(6, view.getTitle())
         Utils.setPresetBorder(gui, Material.ORANGE_STAINED_GLASS_PANE)
-        Utils.setPresetItems(player, gui, Material.ORANGE_STAINED_GLASS_PANE, args)
 
         when (view) {
             GUIView.REWARDS -> {
-                val name = args[2]
                 val filter = Filters.eq("name", name)
                 val rewards = main.rewards.find(filter).first()
                 if(rewards != null) {
@@ -46,7 +43,6 @@ object UtilsRewards {
                 return
             }
             GUIView.REWARDS_REMOVE -> {
-                val name = args[2]
                 val filter = Filters.eq("name", name)
                 val rewards = main.rewards.find(filter).first()
                 if(rewards != null) {
@@ -66,7 +62,7 @@ object UtilsRewards {
                         item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                         gui.setItem(slot, item) {
                             rewards.rewardlist.remove(material)
-                            openGUIRewards(player, view, args)
+                            openGUIRewards(player, view, name)
                             return@setItem
                         }
                     }
@@ -80,6 +76,5 @@ object UtilsRewards {
             }
         }
     }
-
 
 }

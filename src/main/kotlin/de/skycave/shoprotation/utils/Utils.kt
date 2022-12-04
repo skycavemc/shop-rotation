@@ -14,71 +14,19 @@ object Utils {
 
     private val main = JavaPlugin.getPlugin(ShopRotation::class.java)
 
-    fun openGUI(player: Player, view: GUIView, args: Array<out String>) {
-        if(view == GUIView.MAIN) {
-            //TODO: Main GUI Inventory here
-            val gui = main.guiFactory.createGUI(6, view.getTitle())
-            setPresetItems(player, gui, Material.CYAN_STAINED_GLASS_PANE, args)
-        }
-    }
-
     fun openGUIMain(player: Player, name: String) {
         val view = GUIView.MAIN
         val gui = main.guiFactory.createGUI(6, view.getTitle())
+        setPresetMain(player, gui, Material.LIGHT_BLUE_STAINED_GLASS_PANE, name)
 
 
-
-    }
-
-    fun setPresetItems(player: Player, gui: GUI, material: Material, args: Array<out String>) {
-        val pattern = GUIPattern.ofPattern("bbbbbbbbb")
-            .withMaterial('b', ItemBuilder.of(material).name("§0").asItem())
-        gui.formatPattern(pattern.startAtLine(1)).formatPattern(pattern.startAtLine(6))
-
-            .setItem(6,1, ItemBuilder.of(Material.ARROW).name("&cZurück").asItem()) {
-                CustomSound.CLICK.playTo(player)
-                openGUI(player, GUIView.MAIN, args)
-                println("OPEN GUI MAIN")
-            }
-
-            .setItem(6,4, ItemBuilder.of(Material.NETHER_STAR)
-                .name("&dBelohnungen")
-                .description("&7Zeigt alle möglichen Belohnungen an!")
-                .asItem()) {
-                if(!player.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(player)
-                    CustomSound.ERROR.playTo(player)
-                    return@setItem
-                }
-                CustomSound.CLICK.playTo(player)
-                UtilsRewards.openGUIRewards(player, GUIView.REWARDS, args)
-                println("OPEN GUI REWARDS")
-            }
-
-            .setItem(6, 5, ItemBuilder.of(Material.OAK_SIGN)
-                .name("&eHilfe!")
-                .description("&7Zeigt eine Hilfe an!")
-                .asItem()) {
-                sendHelp(player)
-                player.closeInventory()
-            }
-
-            .setItem(6,6, ItemBuilder.of(Material.WHITE_SHULKER_BOX)
-                .name("&eZiele!")
-                .description("&6Zeigt alle Ziele an, welche erreicht werden können!")
-                .asItem()) {
-                if(!player.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(player)
-                    CustomSound.ERROR.playTo(player)
-                    return@setItem
-                }
-                CustomSound.CLICK.playTo(player)
-                UtilsChestItems.openGUIChestItems(player, GUIView.LOOTPOOL, args)
-                println("OPEN GUI CHESTITEMS")
-            }
     }
 
     fun setPresetBorder(gui: GUI, material: Material) {
+        val pattern = GUIPattern.ofPattern("bbbbbbbbb")
+            .withMaterial('b', ItemBuilder.of(material).name("§0").asItem())
+        gui.formatPattern(pattern.startAtLine(1))
+            .formatPattern(pattern.startAtLine(6))
         var slot = 9
         while(slot < 54) {
             if(slot.mod(9) == 0) {
@@ -90,14 +38,52 @@ object Utils {
         }
     }
 
-    private fun sendHelp(player: Player) {
-        main.messages.get("chest-set-location").send(player)
-        main.messages.get("chest-open-gui").send(player)
-        main.messages.get("chest-delete-items").send(player)
-        main.messages.get("chest-show-items").send(player)
-        main.messages.get("chest-show-current-item").send(player)
-        main.messages.get("chest-enable").send(player)
-        main.messages.get("chest-disable").send(player)
-        main.messages.get("chest-help").send(player)
+    private fun setPresetMain(player: Player, gui: GUI, material: Material, name: String) {
+        val pattern = GUIPattern.ofPattern("bbbbbbbbb")
+            .withMaterial('b', ItemBuilder.of(material).name("$0").asItem())
+        gui.formatPattern(pattern.startAtLine(1))
+            .formatPattern(pattern.startAtLine(6))
+
+        val patterngray = GUIPattern.ofPattern("bbbbbbbbb")
+            .withMaterial('b', ItemBuilder.of(Material.BLACK_STAINED_GLASS_PANE).name("§0").asItem())
+        gui.formatPattern(patterngray.startAtLine(2))
+            .formatPattern(patterngray.startAtLine(3))
+            .formatPattern(patterngray.startAtLine(5))
+
+            .setItem(6,4, ItemBuilder.of(Material.NETHER_STAR)
+                .name("&dBelohnungen")
+                .description("&7Zeigt alle möglichen Belohnungen an!")
+                .asItem()) {
+                    if (!player.hasPermission("skybee.shoprotation.admin")) {
+                        main.messages.get("no-perms").send(player)
+                        CustomSound.ERROR.playTo(player)
+                        return@setItem
+                    }
+                    CustomSound.CLICK.playTo(player)
+                    UtilsRewards.openGUIRewards(player, GUIView.REWARDS, name)
+                }
+
+            .setItem(6, 5, ItemBuilder.of(Material.OAK_SIGN)
+                .name("&eHilfe!")
+                .description("&7Zeigt eine Hilfe an!")
+                .asItem()) {
+                Help.sendHelp(player)
+                player.closeInventory()
+            }
+
+            .setItem(6, 6, ItemBuilder.of(Material.WHITE_SHULKER_BOX)
+                .name("&eZiele!")
+                .description("&6Zeigt alle Ziele an, welche erreicht werden können!")
+                .asItem()) {
+                if(!player.hasPermission("skybee.shoprotation.admin")) {
+                    main.messages.get("no-perms").send(player)
+                    CustomSound.ERROR.playTo(player)
+                    return@setItem
+                }
+                CustomSound.CLICK.playTo(player)
+                UtilsChestItems.openGUIChestItems(player, GUIView.LOOTPOOL, name)
+            }
+
     }
+
 }
