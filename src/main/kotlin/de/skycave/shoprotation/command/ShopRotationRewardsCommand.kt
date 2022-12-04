@@ -22,19 +22,15 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
         }
         when (args[1].lowercase()) {
             "addhanditem" -> {
-                if(!sender.hasPermission("skybee.shoprotation.rewards.add")) {
-                    main.messages.get("no-perms").send(sender)
+                //shoprotation rewards addhanditem <name>
+                if(args.size < 3) {
+                    main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
                 val handitem = sender.inventory.itemInMainHand
 
                 if (handitem.type == Material.AIR) {
-                    //TODO: Message - NO AIR
-                    return true
-                }
-
-                if(args.size < 3) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    main.messages.get("material-air-not-allowed").send(sender)
                     return true
                 }
 
@@ -58,6 +54,12 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
 
             }
             "add" -> {
+                //shoprotation rewards add <material> <amount> <name>
+                if(args.size < 5) {
+                    main.messages.get("not-enough-arguments").send(sender)
+                    return true
+                }
+
                 val materialtoCheck = args[2].lowercase()
                 if(!isMaterial(materialtoCheck)) {
                     main.messages.get("invalid-material").send(sender)
@@ -73,7 +75,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     return true
                 }
                 if(material == Material.AIR) {
-                    main.messages.get("invalid-material").send(sender)
+                    main.messages.get("material-air-not-allowed").send(sender)
                     return true
                 }
                 val filter = Filters.eq("name", name)
@@ -92,10 +94,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 }
             }
             "remove" -> {
-                if(!sender.hasPermission("skybee.shoprotation.rewards.remove")) {
-                    main.messages.get("no-perms").send(sender)
-                    return true
-                }
+                //shoprotation rewards remove <name>
                 if(args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
@@ -105,10 +104,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 return true
             }
             "show" -> {
-                if(!sender.hasPermission("skybee.shoprotation.rewards.show")) {
-                    main.messages.get("no-perms").send(sender)
-                    return true
-                }
+                //shoprotation rewards show <name>
                 if(args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true

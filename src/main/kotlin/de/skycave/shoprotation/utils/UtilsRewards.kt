@@ -62,7 +62,7 @@ object UtilsRewards {
                         item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                         gui.setItem(slot, item) {
                             rewards.rewardlist.remove(material)
-                            openGUIRewards(player, view, name)
+                            openGUIRewards(player, GUIView.REWARDS_REMOVE, name)
                             return@setItem
                         }
                     }

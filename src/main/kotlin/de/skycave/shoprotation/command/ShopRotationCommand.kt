@@ -5,6 +5,7 @@ import com.mongodb.client.model.Updates
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.utils.Formatting
+import de.skycave.shoprotation.utils.Help
 import de.skycave.shoprotation.utils.Utils
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -16,24 +17,28 @@ import org.bukkit.util.StringUtil
 
 class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if(args.isEmpty()) {
-            sendHelp(sender)
+        if(sender !is Player){
+            main.messages.get("no-player").send(sender)
             return true
         }
-
+        if(!sender.hasPermission("skybee.shoprotation.admin")) {
+            main.messages.get("no-perms").send(sender)
+            return true
+        }
+        if(args.isEmpty()) {
+            Help.sendHelp(sender)
+            return true
+        }
         when (args[0].lowercase()) {
             "chest" -> {
                 if(args.size < 2) {
-                    sendHelp(sender)
+                    Help.sendHelp(sender)
                     return true
                 }
                 return ShopRotationSubCommand().apply(sender, args)
             }
             "setlocation" -> {
-                if(!checkConditions(true, "skybee.shoprotation.admin", sender)) {
-                    return true
-                }
-                val player = sender as Player
+                //shoprotation setlocation <name>
                 if(args.size < 2){
                     main.messages.get("set-location-syntax").send(sender)
                     return true
@@ -45,7 +50,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 if(chest == null) {
                     chest = Chest()
                     chest.name = name
-                    chest.location = player.location.toString()
+                    chest.location = sender.location
 
                     main.registerChests()
 
@@ -53,47 +58,64 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                     main.registerChests()
                     main.messages.get("chest-created-success")
                         .replace("%name", name)
-                        .replace("%location", Formatting.formatLocation(player.location))
+                        .replace("%location", Formatting.formatLocation(sender.location))
                         .send(sender)
                     return true
                 }
-                main.chests.updateOne(Filters.eq("name", name), Updates.set("location", player.location))
+                main.chests.updateOne(Filters.eq("name", name), Updates.set("location", sender.location))
                 main.messages.get("set-location-success")
                     .replace("%name", name)
-                    .replace("%location", Formatting.formatLocation(player.location))
+                    .replace("%location", Formatting.formatLocation(sender.location))
                     .send(sender)
                 return true
             }
             "opengui" -> {
-                if(sender is Player) {
-                    val name = args[1]
-                    Utils.openGUIMain(sender, name)
+                //shoprotation opengui <name>
+                if(args.size < 2) {
+                    main.messages.get("not-enough-arguments").send(sender)
                 }
+                val name = args[1]
+                Utils.openGUIMain(sender, name)
             }
             "remove" -> {
+                //shoprotation remove <name>
+                if(args.size < 2) {
+                    main.messages.get("not-enough-arguments").send(sender)
+                }
+                val name = args[1]
+                val filter = Filters.eq("name", name)
+                main.chests.find(filter).drop(0)
 
-            }
-            "current" -> {
+                main.registerChests()
+                main.messages.get("chest-remove-success").send(sender)
 
             }
             "lootpool" -> {
+                //SubCommand
                 if(args.size < 2) {
-                    sendHelp(sender)
+                    Help.sendHelp(sender)
+                    return true
+                }
+                if(!sender.hasPermission("skybee.shoprotation.admin")) {
+                    main.messages.get("no-perms").send(sender)
                     return true
                 }
                 return ShopRotationLootpoolCommand().apply(sender, args)
             }
             "rewards" -> {
+                //SubCommand
                 if(args.size < 2) {
-                    sendHelp(sender)
+                    Help.sendHelp(sender)
+                    return true
+                }
+                if(!sender.hasPermission("skybee.shoprotation.admin")) {
+                    main.messages.get("no-perms").send(sender)
                     return true
                 }
                 return ShopRotationRewardsCommand().apply(sender, args)
             }
             "enable" -> {
-                if(!checkConditions(false, "skybee.shoprotation.enable", sender)) {
-                    return true
-                }
+                //shoprotation enable <name>
                 if(args.size < 2) {
                     main.messages.get("set-enabled-syntax").send(sender)
                     return true
@@ -121,9 +143,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 return true
             }
             "disable" -> {
-                if(!checkConditions(false, "skybee.shoprotation.disable", sender)) {
-                    return true
-                }
+                //shoprotation disable <name>
                 if(args.size < 2) {
                     main.messages.get("set-disabled-syntax").send(sender)
                     return true
@@ -150,40 +170,13 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 }
                 return true
             }
-            "help" -> sendHelp(sender)
+            "help" -> Help.sendHelp(sender)
             else -> {
                 main.messages.get("message-unknown").send(sender)
                 return true
             }
         }
         return true
-    }
-
-    @Suppress("SameParameterValue")
-    private fun checkConditions(playeronly: Boolean, permission: String?, sender: CommandSender): Boolean {
-        if(playeronly) {
-            if(sender !is Player) {
-                main.messages.get("no-player").send(sender)
-                return false
-            }
-            if(permission != null && !sender.hasPermission(permission)) {
-                main.messages.get("no-perms").send(sender)
-                return false
-            }
-        }
-        return true
-    }
-
-    private fun sendHelp(sender: CommandSender) {
-        main.messages.get("chest-set-location").send(sender)
-        main.messages.get("chest-open-gui").send(sender)
-        main.messages.get("chest-delete-items").send(sender)
-        main.messages.get("chest-show-items").send(sender)
-        main.messages.get("chest-show-current-item").send(sender)
-        main.messages.get("chest-enable").send(sender)
-        main.messages.get("chest-disable").send(sender)
-        main.messages.get("chest-help").send(sender)
-        //TODO:Add missing messages to help command
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): MutableList<String> {

@@ -22,19 +22,15 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
         }
         when (args[1].lowercase()) {
             "addhanditem" -> {
-                if(!sender.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(sender)
+                //shoprotation lootpool addhanditem <name>
+                if(args.size < 3) {
+                    main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
                 val handitem = sender.inventory.itemInMainHand
 
                 if(handitem.type == Material.AIR) {
                     main.messages.get("material-air-not-allowed").send(sender)
-                    return true
-                }
-
-                if(args.size < 3) {
-                    main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
 
@@ -57,19 +53,19 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
                     .send(sender)
             }
             "add" -> {
-                if(!sender.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(sender)
+                //shoprotation lootpool add <material> <amount> <name>
+                if(args.size < 5) {
+                    main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                val name = args[2].lowercase()
-
-                val materialtoCheck = args[3].lowercase()
+                val materialtoCheck = args[2].lowercase()
                 if(!isMaterial(materialtoCheck)) {
                     main.messages.get("invalid-material").send(sender)
                     return true
                 }
-                val material = Material.getMaterial(args[3].lowercase())
-                val amount = args[4].lowercase()
+                val material = Material.getMaterial(args[2].lowercase())
+                val amount = args[3].lowercase()
+                val name = args[4].lowercase()
                 if(!isNumeric(amount)) {
                     main.messages.get("invalid-number").send(sender)
                     return true
@@ -79,46 +75,37 @@ class ShopRotationLootpoolCommand: java.util.function.BiFunction<CommandSender, 
                     return true
                 }
                 val filter = Filters.eq("name", name)
-                var lootpool = main.chestItems.find(filter).first()
+                val lootpool = main.chestItems.find(filter).first()
 
-                if(lootpool == null) {
-                    lootpool = ChestItems()
-                    lootpool.name = name
-                    lootpool.items = EnumMap(Material::class.java)
-                    main.chestItems.insertOne(lootpool)
-
+                if(lootpool != null) {
+                    if(material != null) {
+                        lootpool.items[material] = amount.toInt()
+                    }
+                    main.chestItems.replaceOne(Filters.eq("name", name), lootpool)
+                    main.messages.get("add-item-to-lootpool-success")
+                        .replace("%material", material.toString())
+                        .replace("%amount", amount)
+                        .send(sender)
                 }
-
-                lootpool.items[material] = amount.toInt()
-
-                main.chestItems.replaceOne(Filters.eq("name", name), lootpool)
-                main.messages.get("add-item-to-lootpool-success")
-                    .replace("%material", material.toString())
-                    .replace("%amount", amount)
-                    .send(sender)
             }
             "remove" -> {
-                if(!sender.hasPermission("skybee.shoprotation.lootpool.remove")) {
-                    main.messages.get("no-perms").send(sender)
-                    return true
-                }
+                //shoprotation lootpool remove <name>
                 if(args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                UtilsChestItems.openGUIChestItems(sender, GUIView.LOOTPOOL_REMOVE, args)
+                val name = args[2]
+                UtilsChestItems.openGUIChestItems(sender, GUIView.LOOTPOOL_REMOVE, name)
                 return true
             }
             "show" -> {
-                if(!sender.hasPermission("skybee.shoprotation.lootpool.show")) {
-                    main.messages.get("no-perms").send(sender)
-                    return true
-                }
+                //shoprotation lootpool show <name>
                 if(args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
-                UtilsChestItems.openGUIChestItems(sender, GUIView.LOOTPOOL, args)
+                val name = args[2]
+                UtilsChestItems.openGUIChestItems(sender, GUIView.LOOTPOOL, name)
                 return true
             }
             else -> {

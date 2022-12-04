@@ -5,12 +5,12 @@ import org.bson.types.ObjectId
 import org.bukkit.Location
 import org.bukkit.Material
 
-class Chest() {
+class Chest {
 
     @BsonId
     lateinit var id: ObjectId
     lateinit var name: String
-    lateinit var location: String
+    lateinit var location: Location
     var enabled = false
     var item: Material? = null
     var amount = 0

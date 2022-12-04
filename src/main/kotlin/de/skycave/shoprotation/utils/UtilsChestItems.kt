@@ -13,13 +13,12 @@ object UtilsChestItems {
 
     private val main = JavaPlugin.getPlugin(ShopRotation::class.java)
 
-    fun openGUIChestItems(player: Player, view: GUIView, args: Array<out String>) {
+    fun openGUIChestItems(player: Player, view: GUIView, name: String) {
         val gui = main.guiFactory.createGUI(6, view.getTitle())
         Utils.setPresetBorder(gui, Material.PINK_STAINED_GLASS_PANE)
 
         when (view) {
             GUIView.LOOTPOOL -> {
-                val name = args[2]
                 val filter = Filters.eq("name", name)
                 val chestItems = main.chestItems.find(filter).first()
                 if(chestItems != null) {
@@ -47,7 +46,6 @@ object UtilsChestItems {
                 return
             }
             GUIView.LOOTPOOL_REMOVE -> {
-                val name = args[2]
                 val filter = Filters.eq("name", name)
                 val chestItems = main.chestItems.find(filter).first()
                 if(chestItems != null) {
@@ -71,7 +69,7 @@ object UtilsChestItems {
                         item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                         gui.setItem(slot, item) {
                             chestItems.items.remove(material)
-                            openGUIChestItems(player, view, args)
+                            openGUIChestItems(player, GUIView.LOOTPOOL_REMOVE, name)
                             return@setItem
                         }
                     }
@@ -86,7 +84,4 @@ object UtilsChestItems {
         }
     }
 
-    fun openGUIChestItems(player: Player, view: GUIView, name: String) {
-
-    }
 }

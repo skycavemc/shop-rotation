@@ -5,16 +5,15 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import de.leonheuer.mcguiapi.gui.GUIFactory
-import de.skycave.shoprotation.listener.PlayerInteractListener
 import de.skycave.shoprotation.codecs.ChestCodecProvider
 import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
 import de.skycave.shoprotation.codecs.LocationCodec
 import de.skycave.shoprotation.codecs.RewardsCodecProvider
 import de.skycave.shoprotation.command.ShopRotationCommand
+import de.skycave.shoprotation.listener.PlayerInteractListener
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.shoprotation.model.Rewards
-import de.skycave.shoprotation.utils.Formatting
 import de.skycave.skycavelib.annotations.InjectService
 import de.skycave.skycavelib.annotations.Prefix
 import de.skycave.skycavelib.data.MessageRegistry
@@ -79,10 +78,10 @@ class ShopRotation : SkyCavePlugin() {
     }
 
     fun registerChests() {
+        saveChestsLocation.clear()
         val collection = chests.find()
         for(element in collection) {
-            val location = Formatting.reverseFormatLocation(element.location)
-            saveChestsLocation[location] = element.name
+            saveChestsLocation[element.location] = element.name
         }
     }
 
@@ -92,19 +91,20 @@ class ShopRotation : SkyCavePlugin() {
             "no-perms" to "&cDu hast keine Rechte für diesen Befehl.",
             "invalid-number" to "&c%number ist keine gültige Zahl.",
             "invalid-material" to "&cBitte gib ein gültiges Material an.",
-            //TODO: Add Invalid-material messages in Plugin
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
 
             //global shoprotation messages
             "unknown-inventory" to "&cDas angefragte Inventar existiert nicht.",
             "not-enough-arguments" to "&cZu wenige Argumente! Siehe /shoprotation help",
+            "material-air-not-allowed" to "&cDas Material \"AIR\" ist nicht erlaubt.",
 
             //chest messages
-            "chest-unknown" to "&cDie Chest %name wurde nicht gefunden.",
+            "chest-unknown" to "&cDie Chest \"%name\" wurde nicht gefunden.",
+            "chest-remove-success" to "&aDie Chest \"%name\" wurde erfolgreich entfernt.",
 
             //help messages
-            "chest-set-location" to "&e/shoprotation setlocation <name> &8» &8Setzt die Location für die Chest ",
+            "chest-set-location" to "&e/shoprotation setlocation <name> &8» &8Setzt den Ort für die Chest ",
             "chest-open-gui" to "&e/shoprotation open &8» &8Öffnet das Inventar der Chest ",
             "chest-delete-items" to "&e/shoprotation delete &8» &8Löscht alle Items der Chest ",
             "chest-show-items" to "&e/shoprotation items &8» &8Zeigt alle Items an",
@@ -114,8 +114,8 @@ class ShopRotation : SkyCavePlugin() {
             "chest-help" to "&e/shoprotation help &8» &8Zeigt diesen Text an",
 
             //location messages
-            "set-location-success" to "&aOrt von %name wurde erfolgreich gesetzt. &7(%location)",
-            "chest-created-success" to "&aChest %name wurde erstellt. &7(%location)",
+            "set-location-success" to "&aOrt von \"%name\" wurde erfolgreich gesetzt. &7(%location)",
+            "chest-created-success" to "&aChest \"%name\" wurde erstellt. &7(%location)",
             "set-location-syntax" to "&e/shoprotation setlocation <name>",
 
             //enable-disable messages
