@@ -24,14 +24,14 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
         }
         when (args[1].lowercase()) {
             "addhanditem" -> {
-                if(!sender.hasPermission("skybee.shoprotation.admin")) {
+                if(!sender.hasPermission("skybee.shoprotation.rewards.add")) {
                     main.messages.get("no-perms").send(sender)
                     return true
                 }
                 val handitem = sender.inventory.itemInMainHand
 
                 if (handitem.type == Material.AIR) {
-                    main.messages.get("material-air-not-allowed").send(sender)
+                    //TODO: Message - NO AIR
                     return true
                 }
 
@@ -60,47 +60,43 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
 
             }
             "add" -> {
-                if(!sender.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(sender)
-                    return true
-                }
-                val name = args[2].lowercase()
 
-                val materialtoCheck = args[3].lowercase()
+
+                val materialtoCheck = args[2].lowercase()
                 if(!isMaterial(materialtoCheck)) {
                     main.messages.get("invalid-material").send(sender)
                     return true
                 }
-                val material = Material.getMaterial(args[3].lowercase())
-                val amount = args[4].lowercase()
+                val material = Material.getMaterial(args[2].lowercase())
+                val amount = args[3].lowercase()
+                val name = args[4].lowercase()
+                println("$materialtoCheck, $material, $amount, $name")
 
                 if(!isNumeric(amount)) {
                     main.messages.get("invalid-number").send(sender)
                     return true
                 }
                 if(material == Material.AIR) {
-                    main.messages.get("material-air-not-allowed").send(sender)
+                    main.messages.get("invalid-material").send(sender)
                     return true
                 }
                 val filter = Filters.eq("name", name)
-                var rewards = main.rewards.find(filter).first()
+                val rewards = main.rewards.find(filter).first()
 
-                if(rewards == null) {
-                    rewards = Rewards()
-                    rewards.name = name
-                    rewards.rewardlist = EnumMap(Material::class.java)
-                    main.rewards.insertOne(rewards)
+                if(rewards != null) {
+                    if (material != null) {
+                        rewards.rewardlist[material] = amount.toInt()
+                    }
+                    main.rewards.replaceOne(Filters.eq("name", name), rewards)
+                    main.messages.get("add-item-to-rewards-success")
+                        .replace("%material", material.toString())
+                        .replace("%amount", amount)
+                        .send(sender)
+                    return true
                 }
-                rewards.rewardlist[material] = amount.toInt()
-
-                main.rewards.replaceOne(Filters.eq("name", name), rewards)
-                main.messages.get("add-item-to-rewards-success")
-                    .replace("%material", material.toString())
-                    .replace("%amount", amount)
-                    .send(sender)
             }
             "remove" -> {
-                if(!sender.hasPermission("skybee.shoprotation.admin")) {
+                if(!sender.hasPermission("skybee.shoprotation.rewards.remove")) {
                     main.messages.get("no-perms").send(sender)
                     return true
                 }
@@ -137,11 +133,22 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
     }
 
     private fun isMaterial(toCheck: String): Boolean {
-        for(material in Material.values()) {
+        val materiallist = Material.values().toMutableList()
+        var arguements = emptyList<String>()
+        var arguements2: List<String>
+        for(material in materiallist) {
+            arguements2 = arguements
+            arguements = arguements2 + material.toString()
+        }
+        if(arguements.contains(toCheck)) {
+            return true
+        }
+
+        /*for(material in Material.values().toMutableList()) {
             if(material.toString() == toCheck) {
                 return true
             }
-        }
+        }*/
         return false
     }
 }

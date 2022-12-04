@@ -7,6 +7,7 @@ import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.Formatting
 import de.skycave.shoprotation.utils.Utils
+import it.unimi.dsi.fastutil.ints.IntLists
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -14,6 +15,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
+import org.junit.internal.matchers.Each
 import kotlin.collections.ArrayList
 
 class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabCompleter {
@@ -47,11 +49,12 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 if(chest == null) {
                     chest = Chest()
                     chest.name = name
-                    chest.location = player.location
+                    chest.location = player.location.toString()
 
                     main.
 
                     main.chests.insertOne(chest)
+                    main.registerChests()
                     main.messages.get("chest-created-success")
                         .replace("%name", name)
                         .replace("%location", Formatting.formatLocation(player.location))
@@ -213,15 +216,16 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             }
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
-        if(args.size == 4) {
+        if(args.size == 3) {
             if(args[1].lowercase() == "add" && (args[0].lowercase() == "lootpool" || args[0].lowercase() == "rewards")) {
-                val materiallist = emptyList<String>()
-                for(material in Material.values()) {
-                    materiallist.toMutableList().add(material.toString())
+                val materiallist = Material.values().toMutableList()
+                var arguments2: List<String>
+                for(material in materiallist) {
+                    arguments2 = arguments
+                    arguments = arguments2 + material.toString()
                 }
-                arguments = materiallist
+                StringUtil.copyPartialMatches(args[2], arguments, completions)
             }
-            StringUtil.copyPartialMatches(args[3], arguments, completions)
         }
         completions.sort()
         return completions

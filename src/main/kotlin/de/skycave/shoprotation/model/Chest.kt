@@ -10,7 +10,7 @@ class Chest() {
     @BsonId
     lateinit var id: ObjectId
     lateinit var name: String
-    lateinit var location: Location
+    lateinit var location: String
     var enabled = false
     var item: Material? = null
     var amount = 0

@@ -5,6 +5,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import de.leonheuer.mcguiapi.gui.GUIFactory
+import de.skycave.shoprotation.Listener.PlayerInteractListener
 import de.skycave.shoprotation.codecs.ChestCodecProvider
 import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
 import de.skycave.shoprotation.codecs.LocationCodec
@@ -21,17 +22,19 @@ import de.skycave.skycavelib.models.SkyCavePlugin
 import net.milkbowl.vault.economy.Economy
 import org.bson.codecs.configuration.CodecRegistries
 import org.bukkit.Location
+import org.bukkit.event.player.PlayerInteractEvent
+import java.text.Normalizer.Form
 
 @Prefix("&fSky&3Cave &8» ")
 class ShopRotation : SkyCavePlugin() {
 
     val messages = MessageRegistry(this)
 
+    val saveChestsLocation = HashMap<Location, String>()
+
     companion object {
         const val MASTER_VOLUME = 1.0f
     }
-
-    val saveChest = HashMap<String, Location>()
 
     lateinit var mongoClient: MongoClient
         private set
@@ -66,15 +69,23 @@ class ShopRotation : SkyCavePlugin() {
         rewards = db.getCollection("rewards", Rewards::class.java)
 
         registerCommand("shoprotation", ShopRotationCommand(this))
-
-        for(location in )
-
-        registerEvents()
+        registerEvents(
+            PlayerInteractListener(this)
+        )
         registerMessages()
+        registerChests()
     }
 
     override fun onDisable() {
         mongoClient.close()
+    }
+
+    fun registerChests() {
+        val collection = chests.find()
+        for(element in collection) {
+            val location = Formatting.reverseFormatLocation(element.location)
+            saveChestsLocation[location] = element.name
+        }
     }
 
     private fun registerMessages() {
@@ -83,7 +94,6 @@ class ShopRotation : SkyCavePlugin() {
             "no-perms" to "&cDu hast keine Rechte für diesen Befehl.",
             "invalid-number" to "&c%number ist keine gültige Zahl.",
             "invalid-material" to "&cBitte gib ein gültiges Material an.",
-            "material-air-not-allowed" to "&cDas Material \"AIR\" ist nicht erlaubt.",
             //TODO: Add Invalid-material messages in Plugin
             "no-player" to "&cDieser Befehl ist nur für Spieler.",
             "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
