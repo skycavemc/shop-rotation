@@ -73,6 +73,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 //shoprotation opengui <name>
                 if(args.size < 2) {
                     main.messages.get("not-enough-arguments").send(sender)
+                    return true
                 }
                 val name = args[1]
                 Utils.openGUIMain(sender, name)
@@ -84,10 +85,11 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
                 }
                 val name = args[1]
                 val filter = Filters.eq("name", name)
-                main.chests.find(filter).drop(0)
+                main.chests.deleteOne(filter)
 
+                //TODO: Abfrage ob die Chest existiert
                 main.registerChests()
-                main.messages.get("chest-remove-success").send(sender)
+                //main.messages.get("chest-remove-success").send(sender)
 
             }
             "lootpool" -> {
@@ -184,7 +186,7 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
         val completions = ArrayList<String>()
 
         if(args.size == 1) {
-            arguments = listOf("setlocation", "help", "remove", "items", "enable", "disable", "opengui", "chest", "lootpool", "rewards")
+            arguments = listOf("setlocation", "help", "remove", "enable", "disable", "opengui", "chest", "lootpool", "rewards")
             StringUtil.copyPartialMatches(args[0], arguments, completions)
         }
         if(args.size == 2) {
@@ -207,12 +209,9 @@ class ShopRotationCommand(private val main: ShopRotation): CommandExecutor, TabC
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
         if(args.size == 3) {
-            if(args[1].lowercase() == "add" && (args[0].lowercase() == "lootpool" || args[0].lowercase() == "rewards")) {
-                val materiallist = Material.values().toMutableList()
-                var arguments2: List<String>
-                for(material in materiallist) {
-                    arguments2 = arguments
-                    arguments = arguments2 + material.toString()
+            if((args[0].lowercase() == "lootpool" || args[0].lowercase() == "rewards") && args[1].lowercase() == "add" ) {
+                arguments = Material.values().map {
+                    it.toString()
                 }
                 StringUtil.copyPartialMatches(args[2], arguments, completions)
             }

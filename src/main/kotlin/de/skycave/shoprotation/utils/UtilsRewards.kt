@@ -47,7 +47,7 @@ object UtilsRewards {
                 val rewards = main.rewards.find(filter).first()
                 if(rewards != null) {
                     val rewardlist = rewards.rewardlist.entries
-                    var slot = 9
+                    var slot = 10
                     for((material, amount) in rewardlist) {
                         if(slot.mod(9) == 0) {
                             slot++
@@ -62,9 +62,11 @@ object UtilsRewards {
                         item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                         gui.setItem(slot, item) {
                             rewards.rewardlist.remove(material)
+                            main.rewards.replaceOne(filter, rewards)
                             openGUIRewards(player, GUIView.REWARDS_REMOVE, name)
                             return@setItem
                         }
+                        slot++
                     }
                 }
                 gui.show(player)

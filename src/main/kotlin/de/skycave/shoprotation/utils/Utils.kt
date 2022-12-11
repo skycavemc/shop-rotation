@@ -11,7 +11,6 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 object Utils {
-
     private val main = JavaPlugin.getPlugin(ShopRotation::class.java)
 
     fun openGUIMain(player: Player, name: String) {
@@ -19,7 +18,7 @@ object Utils {
         val gui = main.guiFactory.createGUI(6, view.getTitle())
         setPresetMain(player, gui, Material.LIGHT_BLUE_STAINED_GLASS_PANE, name)
 
-
+        gui.show(player)
     }
 
     fun setPresetBorder(gui: GUI, material: Material) {
@@ -40,7 +39,7 @@ object Utils {
 
     private fun setPresetMain(player: Player, gui: GUI, material: Material, name: String) {
         val pattern = GUIPattern.ofPattern("bbbbbbbbb")
-            .withMaterial('b', ItemBuilder.of(material).name("$0").asItem())
+            .withMaterial('b', ItemBuilder.of(material).name("§0").asItem())
         gui.formatPattern(pattern.startAtLine(1))
             .formatPattern(pattern.startAtLine(6))
 
@@ -83,7 +82,5 @@ object Utils {
                 CustomSound.CLICK.playTo(player)
                 UtilsChestItems.openGUIChestItems(player, GUIView.LOOTPOOL, name)
             }
-
     }
-
 }

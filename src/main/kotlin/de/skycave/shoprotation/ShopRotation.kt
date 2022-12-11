@@ -14,6 +14,7 @@ import de.skycave.shoprotation.listener.PlayerInteractListener
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.shoprotation.model.Rewards
+import de.skycave.shoprotation.utils.CurrentItem
 import de.skycave.skycavelib.annotations.InjectService
 import de.skycave.skycavelib.annotations.Prefix
 import de.skycave.skycavelib.data.MessageRegistry
@@ -21,6 +22,7 @@ import de.skycave.skycavelib.models.SkyCavePlugin
 import net.milkbowl.vault.economy.Economy
 import org.bson.codecs.configuration.CodecRegistries
 import org.bukkit.Location
+import org.bukkit.Material
 
 @Prefix("&fSky&3Cave &8» ")
 class ShopRotation : SkyCavePlugin() {
@@ -28,6 +30,7 @@ class ShopRotation : SkyCavePlugin() {
     val messages = MessageRegistry(this)
 
     val saveChestsLocation = HashMap<Location, String>()
+    val currentItem = HashMap<Material, Int>()
 
     companion object {
         const val MASTER_VOLUME = 1.0f
@@ -71,6 +74,7 @@ class ShopRotation : SkyCavePlugin() {
         )
         registerMessages()
         registerChests()
+        CurrentItem.calculateCurrentItem()
     }
 
     override fun onDisable() {
@@ -102,6 +106,7 @@ class ShopRotation : SkyCavePlugin() {
             //chest messages
             "chest-unknown" to "&cDie Chest \"%name\" wurde nicht gefunden.",
             "chest-remove-success" to "&aDie Chest \"%name\" wurde erfolgreich entfernt.",
+            "chestitems-is-empty" to "&cEs wurden keine Items in \"%name\" festgelegt.",
 
             //help messages
             "chest-set-location" to "&e/shoprotation setlocation <name> &8» &8Setzt den Ort für die Chest ",
@@ -119,9 +124,9 @@ class ShopRotation : SkyCavePlugin() {
             "set-location-syntax" to "&e/shoprotation setlocation <name>",
 
             //enable-disable messages
-            "set-enabled-success" to "&cDie Chest wurde erfolgreich &aAktiviert&c.",
+            "set-enabled-success" to "&7Die Chest wurde erfolgreich &aAktiviert&7.",
             "enabled-all" to "&7Alle Chests wurden &aaktiviert&7.",
-            "set-disabled-success" to "&cDie Chest wurde erfolgreich &4Deaktiviert&c.",
+            "set-disabled-success" to "&7Die Chest wurde erfolgreich &cDeaktiviert&7.",
             "disabled-all" to "&7Alle Chests wurden &cdeaktiviert&7.",
             "already-enabled" to "&cDie Chest ist schon &aActiviert&c.",
             "already-disabled" to "&cDie Chest ist schon &4Deaktiviert&c.",

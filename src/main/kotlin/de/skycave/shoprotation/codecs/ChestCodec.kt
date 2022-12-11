@@ -33,8 +33,10 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
         locationCodec.encode(writer, value.location, encoderContext)
         writer.writeName("enabled")
         writer.writeBoolean(value.enabled)
-        writer.writeName("item")
-        writer.writeString(value.item.toString())
+        value.item?.let {
+            writer.writeName("item")
+            writer.writeString(it.toString())
+        }
         writer.writeName("amount")
         writer.writeInt32(value.amount)
         writer.writeName("required_amount")

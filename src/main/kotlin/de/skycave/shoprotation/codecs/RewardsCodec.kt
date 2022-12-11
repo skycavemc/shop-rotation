@@ -12,11 +12,6 @@ import org.bukkit.Material
 import java.util.*
 
 class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
-    private val rewardsCodec: Codec<Rewards>
-
-    init {
-        rewardsCodec = codecRegistry.get(Rewards::class.java)
-    }
 
     override fun encode(writer: BsonWriter?, value: Rewards?, encoderContext: EncoderContext?) {
         writer ?: return

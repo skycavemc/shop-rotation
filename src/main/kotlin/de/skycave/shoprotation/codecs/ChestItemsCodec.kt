@@ -14,11 +14,6 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
-    private val itemStackCodec: Codec<ItemStack>
-
-    init {
-        itemStackCodec = codecRegistry.get(ItemStack::class.java)
-    }
 
     override fun encode(writer: BsonWriter?, value: ChestItems?, encoderContext: EncoderContext?) {
         writer ?: return
