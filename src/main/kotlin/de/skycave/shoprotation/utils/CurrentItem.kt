@@ -10,7 +10,7 @@ object CurrentItem {
 
     fun calculateCurrentItem() {
         val collection = main.chests.find()
-        for(element in collection) {
+        for (element in collection) {
             val name = element.name
             val filter = Filters.eq("name", name)
             val chest = main.chests.find(filter).first()
@@ -19,7 +19,8 @@ object CurrentItem {
                 if (chest.item == null) {
                     if (chestItems != null) {
                         if (chestItems.items.isEmpty()) {
-                            val noItems = "[ShopRotation] Die Chest \"%name\" enthaelt keine Items!".replace("%name", name)
+                            val noItems =
+                                "[ShopRotation] Die Chest \"%name\" enthaelt keine Items!".replace("%name", name)
                             println(noItems)
                             return
                         } else {

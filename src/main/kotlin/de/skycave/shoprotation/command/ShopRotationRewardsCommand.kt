@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, Array<out String>, Boolean>  {
+class ShopRotationRewardsCommand : java.util.function.BiFunction<CommandSender, Array<out String>, Boolean> {
 
     private val main = JavaPlugin.getPlugin(ShopRotation::class.java)
 
@@ -23,7 +23,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
         when (args[1].lowercase()) {
             "addhanditem" -> {
                 //shoprotation rewards addhanditem <name>
-                if(args.size < 3) {
+                if (args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
@@ -38,7 +38,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 val filter = Filters.eq("name", name)
                 var rewards = main.rewards.find(filter).first()
 
-                if(rewards == null) {
+                if (rewards == null) {
                     rewards = Rewards()
                     rewards.name = name
                     rewards.rewardlist = EnumMap(Material::class.java)
@@ -53,15 +53,16 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     .send(sender)
 
             }
+
             "add" -> {
                 //shoprotation rewards add <material> <amount> <name>
-                if(args.size < 5) {
+                if (args.size < 5) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
 
                 val materialtoCheck = args[2].lowercase()
-                if(!isMaterial(materialtoCheck)) {
+                if (!isMaterial(materialtoCheck)) {
                     main.messages.get("invalid-material").send(sender)
                     return true
                 }
@@ -70,18 +71,18 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 val name = args[4].lowercase()
                 println("$materialtoCheck, $material, $amount, $name")
 
-                if(!isNumeric(amount)) {
+                if (!isNumeric(amount)) {
                     main.messages.get("invalid-number").send(sender)
                     return true
                 }
-                if(material == Material.AIR) {
+                if (material == Material.AIR) {
                     main.messages.get("material-air-not-allowed").send(sender)
                     return true
                 }
                 val filter = Filters.eq("name", name)
                 val rewards = main.rewards.find(filter).first()
 
-                if(rewards != null) {
+                if (rewards != null) {
                     if (material != null) {
                         rewards.rewardlist[material] = amount.toInt()
                     }
@@ -93,9 +94,10 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                     return true
                 }
             }
+
             "remove" -> {
                 //shoprotation rewards remove <name>
-                if(args.size < 3) {
+                if (args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
@@ -103,9 +105,10 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 UtilsRewards.openGUIRewards(sender, GUIView.REWARDS_REMOVE, name)
                 return true
             }
+
             "show" -> {
                 //shoprotation rewards show <name>
-                if(args.size < 3) {
+                if (args.size < 3) {
                     main.messages.get("not-enough-arguments").send(sender)
                     return true
                 }
@@ -113,6 +116,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
                 UtilsRewards.openGUIRewards(sender, GUIView.REWARDS, name)
                 return true
             }
+
             else -> {
                 main.messages.get("message-unknown").send(sender)
                 return true
@@ -126,23 +130,7 @@ class ShopRotationRewardsCommand: java.util.function.BiFunction<CommandSender, A
         return toCheck.matches(regex)
     }
 
-    private fun isMaterial(toCheck: String): Boolean {
-        val materiallist = Material.values().toMutableList()
-        var arguements = emptyList<String>()
-        var arguements2: List<String>
-        for(material in materiallist) {
-            arguements2 = arguements
-            arguements = arguements2 + material.toString()
-        }
-        if(arguements.contains(toCheck)) {
-            return true
-        }
-
-        /*for(material in Material.values().toMutableList()) {
-            if(material.toString() == toCheck) {
-                return true
-            }
-        }*/
-        return false
-    }
+    private fun isMaterial(toCheck: String) = Material.values()
+        .map { it.toString() }
+        .contains(toCheck)
 }

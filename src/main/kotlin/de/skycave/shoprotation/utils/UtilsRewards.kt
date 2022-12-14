@@ -21,13 +21,13 @@ object UtilsRewards {
             GUIView.REWARDS -> {
                 val filter = Filters.eq("name", name)
                 val rewards = main.rewards.find(filter).first()
-                if(rewards != null) {
+                if (rewards != null) {
                     val rewardlist = rewards.rewardlist.entries
                     var slot = 10
-                    for((material, amount) in rewardlist) {
-                        if(slot.mod(9) == 0) {
+                    for ((material, amount) in rewardlist) {
+                        if (slot.mod(9) == 0) {
                             slot++
-                        } else if((slot + 1).mod(9) == 0) {
+                        } else if ((slot + 1).mod(9) == 0) {
                             slot += 2
                         }
                         val item = ItemBuilder.of(material)
@@ -42,16 +42,17 @@ object UtilsRewards {
                 gui.show(player)
                 return
             }
+
             GUIView.REWARDS_REMOVE -> {
                 val filter = Filters.eq("name", name)
                 val rewards = main.rewards.find(filter).first()
-                if(rewards != null) {
+                if (rewards != null) {
                     val rewardlist = rewards.rewardlist.entries
                     var slot = 10
-                    for((material, amount) in rewardlist) {
-                        if(slot.mod(9) == 0) {
+                    for ((material, amount) in rewardlist) {
+                        if (slot.mod(9) == 0) {
                             slot++
-                        } else if((slot + 1).mod(9) == 0) {
+                        } else if ((slot + 1).mod(9) == 0) {
                             slot += 2
                         }
                         val item = ItemBuilder.of(material)
@@ -72,6 +73,7 @@ object UtilsRewards {
                 gui.show(player)
                 return
             }
+
             else -> {
                 main.messages.get("unknown-inventory").send(player)
                 return

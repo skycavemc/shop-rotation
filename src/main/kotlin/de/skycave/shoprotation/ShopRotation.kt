@@ -84,7 +84,7 @@ class ShopRotation : SkyCavePlugin() {
     fun registerChests() {
         saveChestsLocation.clear()
         val collection = chests.find()
-        for(element in collection) {
+        for (element in collection) {
             saveChestsLocation[element.location] = element.name
         }
     }

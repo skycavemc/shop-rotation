@@ -27,8 +27,8 @@ class Hologram(
         checkLivingTask = main.server.scheduler.runTaskTimer(
             main,
             Runnable {
-                if(!isShown) return@Runnable
-                if(armorStand.isDead || displayItem.isDead) {
+                if (!isShown) return@Runnable
+                if (armorStand.isDead || displayItem.isDead) {
                     kill()
                     create()
                 }

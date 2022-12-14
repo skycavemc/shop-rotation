@@ -7,15 +7,14 @@ import org.bson.BsonWriter
 import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
-import org.bson.codecs.configuration.CodecRegistry
 import org.bukkit.Material
 import java.util.*
 
-class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
+class RewardsCodec : Codec<Rewards> {
 
     override fun encode(writer: BsonWriter?, value: Rewards?, encoderContext: EncoderContext?) {
         writer ?: return
-        if(value == null) {
+        if (value == null) {
             writer.writeNull()
             return
         }
@@ -24,7 +23,7 @@ class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
         writer.writeString(value.name)
         writer.writeName("rewardlist")
         writer.writeStartDocument()
-        for(reward in value.rewardlist.entries) {
+        for (reward in value.rewardlist.entries) {
             writer.writeName(reward.key.toString())
             writer.writeInt32(reward.value)
         }
@@ -34,12 +33,12 @@ class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
     }
 
     override fun decode(reader: BsonReader?, decoderContext: DecoderContext?): Rewards {
-        val  rewards = Rewards()
+        val rewards = Rewards()
         reader ?: return rewards
 
         reader.readStartDocument()
-        while(reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-            when(reader.readName()) {
+        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+            when (reader.readName()) {
                 "_id" -> rewards.id = reader.readObjectId()
                 "name" -> rewards.name = reader.readString()
                 "rewardlist" -> {
@@ -52,6 +51,7 @@ class RewardsCodec(codecRegistry: CodecRegistry): Codec<Rewards> {
                     reader.readEndDocument()
                     rewards.rewardlist = rewardlist
                 }
+
                 else -> reader.skipValue()
             }
         }

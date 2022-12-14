@@ -7,13 +7,10 @@ import org.bson.BsonWriter
 import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
-import org.bson.codecs.configuration.CodecRegistry
 import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.collections.HashMap
 
-class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
+class ChestItemsCodec : Codec<ChestItems> {
 
     override fun encode(writer: BsonWriter?, value: ChestItems?, encoderContext: EncoderContext?) {
         writer ?: return
@@ -55,6 +52,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
                     }
                     chestitems.items = items
                 }
+
                 else -> reader.skipValue()
             }
         }

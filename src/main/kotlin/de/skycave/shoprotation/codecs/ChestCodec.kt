@@ -43,7 +43,7 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
         writer.writeInt32(value.requiredAmount)
         writer.writeName("lootpool")
         writer.writeStartArray()
-        value.lootpool.forEach{writer.writeString(it)}
+        value.lootpool.forEach { writer.writeString(it) }
         writer.writeEndArray()
         writer.writeEndDocument()
     }
@@ -70,6 +70,7 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
                     }
                     reader.readEndArray()
                 }
+
                 else -> reader.skipValue()
             }
         }

@@ -4,8 +4,9 @@ import de.skycave.shoprotation.ShopRotation
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.function.BiFunction
 
-class ShopRotationSubCommand: java.util.function.BiFunction<CommandSender, Array<out String>, Boolean> {
+class ShopRotationSubCommand : BiFunction<CommandSender, Array<out String>, Boolean> {
 
     private val main = JavaPlugin.getPlugin(ShopRotation::class.java)
 
@@ -19,9 +20,11 @@ class ShopRotationSubCommand: java.util.function.BiFunction<CommandSender, Array
             "get" -> {
 
             }
+
             "getall" -> {
 
             }
+
             "current" -> {
                 val chest = main.chests.find().first()
                 val currentitem = chest?.item.toString()
@@ -36,6 +39,7 @@ class ShopRotationSubCommand: java.util.function.BiFunction<CommandSender, Array
                     .send(sender)
                 return true
             }
+
             else -> {
                 main.messages.get("message-unknown").send(sender)
                 return true

@@ -5,7 +5,7 @@ import org.bson.codecs.Codec
 import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistry
 
-class ChestCodecProvider: CodecProvider {
+class ChestCodecProvider : CodecProvider {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any?> get(clazz: Class<T>?, registry: CodecRegistry?): Codec<T>? {

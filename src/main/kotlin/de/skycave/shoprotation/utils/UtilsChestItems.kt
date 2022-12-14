@@ -21,17 +21,17 @@ object UtilsChestItems {
             GUIView.LOOTPOOL -> {
                 val filter = Filters.eq("name", name)
                 val chestItems = main.chestItems.find(filter).first()
-                if(chestItems != null) {
+                if (chestItems != null) {
                     val chestitemslist = chestItems.items.entries
                     var slot = 9
-                    for((material, amount) in chestitemslist) {
-                        if(slot.mod(9) == 0) {
+                    for ((material, amount) in chestitemslist) {
+                        if (slot.mod(9) == 0) {
                             slot++
-                        } else if((slot + 1).mod(9) == 0) {
+                        } else if ((slot + 1).mod(9) == 0) {
                             slot += 2
                         }
                         var amountfinal = amount
-                        if(amount > 64) {
+                        if (amount > 64) {
                             amountfinal = 64
                         }
                         val item = ItemBuilder.of(material)
@@ -45,20 +45,21 @@ object UtilsChestItems {
                 gui.show(player)
                 return
             }
+
             GUIView.LOOTPOOL_REMOVE -> {
                 val filter = Filters.eq("name", name)
                 val chestItems = main.chestItems.find(filter).first()
-                if(chestItems != null) {
+                if (chestItems != null) {
                     val chestitemslist = chestItems.items.entries
                     var slot = 9
-                    for((material, amount) in chestitemslist) {
-                        if(slot.mod(9) == 0) {
+                    for ((material, amount) in chestitemslist) {
+                        if (slot.mod(9) == 0) {
                             slot++
-                        } else if((slot + 1).mod(9) == 0) {
+                        } else if ((slot + 1).mod(9) == 0) {
                             slot += 2
                         }
                         var amountfinal = amount
-                        if(amount > 64) {
+                        if (amount > 64) {
                             amountfinal = 64
                         }
                         val item = ItemBuilder.of(material)
@@ -77,6 +78,7 @@ object UtilsChestItems {
                 gui.show(player)
                 return
             }
+
             else -> {
                 main.messages.get("unknown-inventory").send(player)
                 return

@@ -10,7 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.*
 
-class LocationCodec: Codec<Location> {
+class LocationCodec : Codec<Location> {
 
     override fun encode(writer: BsonWriter?, value: Location?, encoderContext: EncoderContext?) {
         writer ?: return

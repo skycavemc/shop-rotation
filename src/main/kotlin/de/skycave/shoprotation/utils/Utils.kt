@@ -27,10 +27,10 @@ object Utils {
         gui.formatPattern(pattern.startAtLine(1))
             .formatPattern(pattern.startAtLine(6))
         var slot = 9
-        while(slot < 54) {
-            if(slot.mod(9) == 0) {
+        while (slot < 54) {
+            if (slot.mod(9) == 0) {
                 gui.setItem(slot, ItemBuilder.of(material).name("§0").asItem())
-            } else if(slot == 17 || slot == 26 || slot == 35 || slot == 44) {
+            } else if (slot == 17 || slot == 26 || slot == 35 || slot == 44) {
                 gui.setItem(slot, ItemBuilder.of(material).name("§0").asItem())
             }
             slot++
@@ -49,32 +49,38 @@ object Utils {
             .formatPattern(patterngray.startAtLine(3))
             .formatPattern(patterngray.startAtLine(5))
 
-            .setItem(6,4, ItemBuilder.of(Material.NETHER_STAR)
-                .name("&dBelohnungen")
-                .description("&7Zeigt alle möglichen Belohnungen an!")
-                .asItem()) {
-                    if (!player.hasPermission("skybee.shoprotation.admin")) {
-                        main.messages.get("no-perms").send(player)
-                        CustomSound.ERROR.playTo(player)
-                        return@setItem
-                    }
-                    CustomSound.CLICK.playTo(player)
-                    UtilsRewards.openGUIRewards(player, GUIView.REWARDS, name)
+            .setItem(
+                6, 4, ItemBuilder.of(Material.NETHER_STAR)
+                    .name("&dBelohnungen")
+                    .description("&7Zeigt alle möglichen Belohnungen an!")
+                    .asItem()
+            ) {
+                if (!player.hasPermission("skybee.shoprotation.admin")) {
+                    main.messages.get("no-perms").send(player)
+                    CustomSound.ERROR.playTo(player)
+                    return@setItem
                 }
+                CustomSound.CLICK.playTo(player)
+                UtilsRewards.openGUIRewards(player, GUIView.REWARDS, name)
+            }
 
-            .setItem(6, 5, ItemBuilder.of(Material.OAK_SIGN)
-                .name("&eHilfe!")
-                .description("&7Zeigt eine Hilfe an!")
-                .asItem()) {
+            .setItem(
+                6, 5, ItemBuilder.of(Material.OAK_SIGN)
+                    .name("&eHilfe!")
+                    .description("&7Zeigt eine Hilfe an!")
+                    .asItem()
+            ) {
                 Help.sendHelp(player)
                 player.closeInventory()
             }
 
-            .setItem(6, 6, ItemBuilder.of(Material.WHITE_SHULKER_BOX)
-                .name("&eZiele!")
-                .description("&6Zeigt alle Ziele an, welche erreicht werden können!")
-                .asItem()) {
-                if(!player.hasPermission("skybee.shoprotation.admin")) {
+            .setItem(
+                6, 6, ItemBuilder.of(Material.WHITE_SHULKER_BOX)
+                    .name("&eZiele!")
+                    .description("&6Zeigt alle Ziele an, welche erreicht werden können!")
+                    .asItem()
+            ) {
+                if (!player.hasPermission("skybee.shoprotation.admin")) {
                     main.messages.get("no-perms").send(player)
                     CustomSound.ERROR.playTo(player)
                     return@setItem
