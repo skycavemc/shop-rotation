@@ -87,6 +87,7 @@ class ShopRotation : SkyCavePlugin() {
         for (element in collection) {
             saveChestsLocation[element.location] = element.name
         }
+        // TODO get rid of
     }
 
     private fun registerMessages() {
