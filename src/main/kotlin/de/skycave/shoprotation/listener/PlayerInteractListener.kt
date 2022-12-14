@@ -7,13 +7,14 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 
 class PlayerInteractListener(private val main: ShopRotation) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val player = event.player
-        if (event.action == Action.RIGHT_CLICK_BLOCK) {
+        if (event.action == Action.RIGHT_CLICK_BLOCK && event.hand == EquipmentSlot.HAND) {
             val clickedBlock = event.clickedBlock ?: return
 
             if (main.saveChestsLocation.contains(clickedBlock.location)) {
