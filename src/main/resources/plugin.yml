@@ -4,7 +4,7 @@ api-version: 1.19
 authors: [Hakuyamu, NYC_1809]
 main: de.skycave.shoprotation.ShopRotation
 depend:
-  - SkyBeeCore
+  - SkyCaveLibrary
 
 commands:
   shoprotation:
