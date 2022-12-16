@@ -25,9 +25,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
-    implementation("de.skycave:skycavelib:1.1.0")
-    implementation("org.mongodb:mongodb-driver-sync:4.7.1")
+    compileOnly("de.skycave:skycavelib:1.1.0")
+    compileOnly("org.mongodb:mongodb-driver-sync:4.7.1")
     compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
 }
 
