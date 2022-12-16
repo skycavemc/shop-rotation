@@ -28,12 +28,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     compileOnly("de.skycave:skycavelib:1.4.1")
     compileOnly("org.mongodb:mongodb-driver-sync:4.7.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.heuerleon:mcguiapi:v1.3.5")
-    compileOnly("com.rollbar:rollbar-java:1.8.1")
     compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
 }
 
