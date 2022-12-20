@@ -3,6 +3,7 @@ package de.skycave.shoprotation.command
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
 import de.skycave.shoprotation.ShopRotation
+import de.skycave.shoprotation.enums.Message
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.utils.Formatting
 import de.skycave.shoprotation.utils.Help
@@ -19,11 +20,11 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
-            main.messages.get("no-player").send(sender)
+            Message.NO_PLAYER.get().send(sender)
             return true
         }
         if (!sender.hasPermission("skybee.shoprotation.admin")) {
-            main.messages.get("no-perms").send(sender)
+            Message.NO_PERMS.get().send(sender)
             return true
         }
         if (args.isEmpty()) {
@@ -42,32 +43,39 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
             "setlocation" -> {
                 //shoprotation setlocation <name>
                 if (args.size < 2) {
-                    main.messages.get("set-location-syntax").send(sender)
+                    Message.LOCATION_SYNTAX.get().send(sender)
                     return true
                 }
                 val name = args[1].lowercase()
                 val filter = Filters.eq("name", name)
                 var chest = main.chests.find(filter).first()
 
+                val block = sender.getTargetBlock(3)
+
+                if (block == null) {
+                    Message.LOOK_AT_CHEST.get().send(sender)
+                    return true
+                }
+
+                if (block.type != Material.CHEST) {
+                    Message.LOOK_AT_CHEST.get().send(sender)
+                    return true
+                }
                 if (chest == null) {
                     chest = Chest()
                     chest.name = name
-                    chest.location = sender.location
-
-                    main.registerChests()
-
+                    chest.location = block.location
                     main.chests.insertOne(chest)
-                    main.registerChests()
-                    main.messages.get("chest-created-success")
+                    Message.CHEST_CREATED_SUCESSUL.get()
                         .replace("%name", name)
-                        .replace("%location", Formatting.formatLocation(sender.location))
+                        .replace("%location", Formatting.formatLocation(block.location))
                         .send(sender)
                     return true
                 }
-                main.chests.updateOne(Filters.eq("name", name), Updates.set("location", sender.location))
-                main.messages.get("set-location-success")
+                main.chests.updateOne(Filters.eq("name", name), Updates.set("location", block.location))
+                Message.LOCATION_SET_SUCESS.get()
                     .replace("%name", name)
-                    .replace("%location", Formatting.formatLocation(sender.location))
+                    .replace("%location", Formatting.formatLocation(block.location))
                     .send(sender)
                 return true
             }
@@ -75,7 +83,7 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
             "opengui" -> {
                 //shoprotation opengui <name>
                 if (args.size < 2) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    Message.NOT_ENOUGH_ARGS.get().send(sender)
                     return true
                 }
                 val name = args[1]
@@ -85,16 +93,19 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
             "remove" -> {
                 //shoprotation remove <name>
                 if (args.size < 2) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    Message.NOT_ENOUGH_ARGS.get().send(sender)
                 }
                 val name = args[1]
                 val filter = Filters.eq("name", name)
+                val chest = main.chests.find(filter).first()
+                if (chest == null) {
+                    Message.COULD_NOT_FIND_CHEST.get().send(sender)
+                    return true;
+                }
                 main.chests.deleteOne(filter)
-
-                //TODO: Abfrage ob die Chest existiert
-                main.registerChests()
-                //main.messages.get("chest-remove-success").send(sender)
-
+                Message.CHEST_REMOVE_SUCESS.get()
+                    .replace("%name", name)
+                    .send(sender)
             }
 
             "lootpool" -> {
@@ -104,35 +115,22 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
                     return true
                 }
                 if (!sender.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(sender)
+                    Message.NO_PERMS.get().send(sender)
                     return true
                 }
                 return ShopRotationLootpoolCommand().apply(sender, args)
             }
 
-            "rewards" -> {
-                //SubCommand
-                if (args.size < 2) {
-                    Help.sendHelp(sender)
-                    return true
-                }
-                if (!sender.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(sender)
-                    return true
-                }
-                return ShopRotationRewardsCommand().apply(sender, args)
-            }
-
             "enable" -> {
                 //shoprotation enable <name>
                 if (args.size < 2) {
-                    main.messages.get("set-enabled-syntax").send(sender)
+                    Message.CHEST_ENABLE.get().send(sender)
                     return true
                 }
                 val name = args[1].lowercase()
                 if (name == "all") {
                     main.chests.updateMany(Filters.exists("name"), Updates.set("enabled", true))
-                    main.messages.get("enabled-all").send(sender)
+                    Message.CHEST_ENABLED_ALL.get().send(sender)
                     return true
                 }
 
@@ -140,14 +138,16 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
                 val chest = main.chests.find(filter).first()
 
                 if (chest == null) {
-                    main.messages.get("chest-unknown").replace("%name", name).send(sender)
+                    Message.CHEST_UNKNOWN.get()
+                        .replace("%name", name)
+                        .send(sender)
                     return true
                 }
                 if (!chest.enabled) {
                     main.chests.updateOne(Filters.eq("name", name), Updates.set("enabled", true))
-                    main.messages.get("set-enabled-success").send(sender)
+                    Message.CHEST_ENABLED_SUCESS.get().send(sender)
                 } else {
-                    main.messages.get("already-enabled").send(sender)
+                    Message.CHEST_ALREADY_ENABLED.get().send(sender)
                 }
                 return true
             }
@@ -155,13 +155,13 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
             "disable" -> {
                 //shoprotation disable <name>
                 if (args.size < 2) {
-                    main.messages.get("set-disabled-syntax").send(sender)
+                    Message.CHEST_DISABLE.get().send(sender)
                     return true
                 }
                 val name = args[1].lowercase()
                 if (name == "all") {
                     main.chests.updateMany(Filters.exists("name"), Updates.set("enabled", false))
-                    main.messages.get("disabled-all").send(sender)
+                    Message.CHEST_DISABLED_ALL.get().send(sender)
                     return true
                 }
 
@@ -169,21 +169,21 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
                 val chest = main.chests.find(filter).first()
 
                 if (chest == null) {
-                    main.messages.get("chest-unknown").replace("%name", name).send(sender)
+                    Message.CHEST_UNKNOWN.get().send(sender)
                     return true
                 }
                 if (chest.enabled) {
                     main.chests.updateOne(Filters.eq("name", name), Updates.set("enabled", false))
-                    main.messages.get("set-disabled-success").send(sender)
+                    Message.CHEST_DISABLED_SUCESS.get().send(sender)
                 } else {
-                    main.messages.get("already-disabled").send(sender)
+                    Message.CHEST_ALREADY_DISABLED.get().send(sender)
                 }
                 return true
             }
 
             "help" -> Help.sendHelp(sender)
             else -> {
-                main.messages.get("message-unknown").send(sender)
+                Message.MESSAGE_UNKNOWN.get().send(sender)
                 return true
             }
         }
@@ -201,7 +201,7 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
 
         if (args.size == 1) {
             arguments =
-                listOf("setlocation", "help", "remove", "enable", "disable", "opengui", "chest", "lootpool", "rewards")
+                listOf("setlocation", "help", "remove", "enable", "disable", "opengui", "chest", "lootpool")
             StringUtil.copyPartialMatches(args[0], arguments, completions)
         }
         if (args.size == 2) {
@@ -217,10 +217,6 @@ class ShopRotationCommand(private val main: ShopRotation) : CommandExecutor, Tab
                 }
 
                 "lootpool" -> {
-                    arguments = listOf("addhanditem", "add", "remove", "show")
-                }
-
-                "rewards" -> {
                     arguments = listOf("addhanditem", "add", "remove", "show")
                 }
             }

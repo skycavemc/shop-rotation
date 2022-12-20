@@ -1,5 +1,5 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.*
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("de.skycave:skycavelib:1.4.1")
+    compileOnly("de.skycave:skycavelib:2.0.0")
     compileOnly("org.mongodb:mongodb-driver-sync:4.7.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.heuerleon:mcguiapi:v1.3.5")

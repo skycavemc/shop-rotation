@@ -3,6 +3,7 @@ package de.skycave.shoprotation.utils
 import com.mongodb.client.model.Filters
 import de.leonheuer.mcguiapi.utils.ItemBuilder
 import de.skycave.shoprotation.ShopRotation
+import de.skycave.shoprotation.enums.Message
 import de.skycave.shoprotation.model.display.GUIView
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -75,7 +76,7 @@ object UtilsRewards {
             }
 
             else -> {
-                main.messages.get("unknown-inventory").send(player)
+                Message.UNKNOWN_INVENTORY.get().send(player)
                 return
             }
         }

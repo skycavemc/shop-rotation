@@ -4,6 +4,7 @@ import de.leonheuer.mcguiapi.gui.GUI
 import de.leonheuer.mcguiapi.gui.GUIPattern
 import de.leonheuer.mcguiapi.utils.ItemBuilder
 import de.skycave.shoprotation.ShopRotation
+import de.skycave.shoprotation.enums.Message
 import de.skycave.shoprotation.model.display.CustomSound
 import de.skycave.shoprotation.model.display.GUIView
 import org.bukkit.Material
@@ -16,8 +17,9 @@ object Utils {
     fun openGUIMain(player: Player, name: String) {
         val view = GUIView.MAIN
         val gui = main.guiFactory.createGUI(6, view.getTitle())
+        println("dev122")
         setPresetMain(player, gui, Material.LIGHT_BLUE_STAINED_GLASS_PANE, name)
-
+        println("dev12")
         gui.show(player)
     }
 
@@ -56,7 +58,7 @@ object Utils {
                     .asItem()
             ) {
                 if (!player.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(player)
+                    Message.NO_PERMS.get().send(player)
                     CustomSound.ERROR.playTo(player)
                     return@setItem
                 }
@@ -81,7 +83,7 @@ object Utils {
                     .asItem()
             ) {
                 if (!player.hasPermission("skybee.shoprotation.admin")) {
-                    main.messages.get("no-perms").send(player)
+                    Message.NO_PERMS.get().send(player)
                     CustomSound.ERROR.playTo(player)
                     return@setItem
                 }

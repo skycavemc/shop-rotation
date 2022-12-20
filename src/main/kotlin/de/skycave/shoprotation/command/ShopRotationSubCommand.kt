@@ -1,6 +1,7 @@
 package de.skycave.shoprotation.command
 
 import de.skycave.shoprotation.ShopRotation
+import de.skycave.shoprotation.enums.Message
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -12,7 +13,7 @@ class ShopRotationSubCommand : BiFunction<CommandSender, Array<out String>, Bool
 
     override fun apply(sender: CommandSender, args: Array<out String>): Boolean {
         if (sender !is Player) {
-            main.messages.get("no-player").send(sender)
+            Message.NO_PLAYER.get().send(sender)
             return true
         }
 
@@ -32,7 +33,7 @@ class ShopRotationSubCommand : BiFunction<CommandSender, Array<out String>, Bool
                 val amount = chest?.amount.toString()
 
                 sender.sendMessage("&eCurrent item: &f %currentitem &7(&f%amount&7/&f%requiredamount&7)")
-                main.messages.get("current-item")
+                Message.CHEST_CURRENT_ITEM.get()
                     .replace("%currentitem", currentitem)
                     .replace("%amount", amount)
                     .replace("%requiredamount", requiredamount)
@@ -41,7 +42,7 @@ class ShopRotationSubCommand : BiFunction<CommandSender, Array<out String>, Bool
             }
 
             else -> {
-                main.messages.get("message-unknown").send(sender)
+                Message.MESSAGE_UNKNOWN.get().send(sender)
                 return true
             }
         }

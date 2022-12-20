@@ -2,6 +2,7 @@ package de.skycave.shoprotation.command
 
 import com.mongodb.client.model.Filters
 import de.skycave.shoprotation.ShopRotation
+import de.skycave.shoprotation.enums.Message
 import de.skycave.shoprotation.model.ChestItems
 import de.skycave.shoprotation.model.display.GUIView
 import de.skycave.shoprotation.utils.UtilsChestItems
@@ -17,20 +18,20 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
 
     override fun apply(sender: CommandSender, args: Array<out String>): Boolean {
         if (sender !is Player) {
-            main.messages.get("no-player").send(sender)
+            Message.NO_PLAYER.get().send(sender)
             return true
         }
         when (args[1].lowercase()) {
             "addhanditem" -> {
                 //shoprotation lootpool addhanditem <name>
                 if (args.size < 3) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    Message.NOT_ENOUGH_ARGS.get().send(sender)
                     return true
                 }
                 val handitem = sender.inventory.itemInMainHand
 
                 if (handitem.type == Material.AIR) {
-                    main.messages.get("material-air-not-allowed").send(sender)
+                    Message.MATERIAL_AIR_NOT_ALLOWED.get().send(sender)
                     return true
                 }
 
@@ -47,7 +48,7 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
 
                 lootpool.items[handitem.type] = handitem.amount
                 main.chestItems.replaceOne(Filters.eq("name", name), lootpool)
-                main.messages.get("add-item-to-lootpool-success")
+                Message.ADD_ITEM_TO_LOOTPOOL.get()
                     .replace("%material", handitem.type.name)
                     .replace("%amount", handitem.amount.toString())
                     .send(sender)
@@ -56,23 +57,23 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
             "add" -> {
                 //shoprotation lootpool add <material> <amount> <name>
                 if (args.size < 5) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    Message.NOT_ENOUGH_ARGS.get().send(sender)
                     return true
                 }
                 val materialtoCheck = args[2].lowercase()
                 if (!isMaterial(materialtoCheck)) {
-                    main.messages.get("invalid-material").send(sender)
+                    Message.INVALID_MATERIAL.get().send(sender)
                     return true
                 }
                 val material = Material.getMaterial(args[2].lowercase())
                 val amount = args[3].lowercase()
                 val name = args[4].lowercase()
                 if (!isNumeric(amount)) {
-                    main.messages.get("invalid-number").send(sender)
+                    Message.INVALID_NUMBER.get().send(sender)
                     return true
                 }
                 if (material == Material.AIR) {
-                    main.messages.get("material-air-not-allowed").send(sender)
+                    Message.MATERIAL_AIR_NOT_ALLOWED.get().send(sender)
                     return true
                 }
                 val filter = Filters.eq("name", name)
@@ -83,7 +84,7 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
                         lootpool.items[material] = amount.toInt()
                     }
                     main.chestItems.replaceOne(Filters.eq("name", name), lootpool)
-                    main.messages.get("add-item-to-lootpool-success")
+                    Message.ADD_ITEM_TO_LOOTPOOL.get()
                         .replace("%material", material.toString())
                         .replace("%amount", amount)
                         .send(sender)
@@ -93,7 +94,7 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
             "remove" -> {
                 //shoprotation lootpool remove <name>
                 if (args.size < 3) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    Message.NOT_ENOUGH_ARGS.get().send(sender)
                     return true
                 }
                 val name = args[2]
@@ -104,7 +105,7 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
             "show" -> {
                 //shoprotation lootpool show <name>
                 if (args.size < 3) {
-                    main.messages.get("not-enough-arguments").send(sender)
+                    Message.NOT_ENOUGH_ARGS.get().send(sender)
                     return true
                 }
                 val name = args[2]
@@ -113,7 +114,7 @@ class ShopRotationLootpoolCommand : java.util.function.BiFunction<CommandSender,
             }
 
             else -> {
-                main.messages.get("message-unknown").send(sender)
+                Message.MESSAGE_UNKNOWN.get().send(sender)
                 return true
             }
         }

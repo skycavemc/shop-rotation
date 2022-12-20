@@ -1,7 +1,9 @@
 package de.skycave.shoprotation.listener
 
+import com.mongodb.client.model.Filters
 import de.skycave.shoprotation.ShopRotation
 import de.skycave.shoprotation.utils.Utils
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -16,13 +18,13 @@ class PlayerInteractListener(private val main: ShopRotation) : Listener {
         val player = event.player
         if (event.action == Action.RIGHT_CLICK_BLOCK && event.hand == EquipmentSlot.HAND) {
             val clickedBlock = event.clickedBlock ?: return
-
-            if (main.saveChestsLocation.contains(clickedBlock.location)) {
-                val clickedChest = main.saveChestsLocation[clickedBlock.location]
-                if (clickedChest != null) {
-                    Utils.openGUIMain(player, clickedChest)
-                }
+            if (clickedBlock.type != Material.CHEST) {
+                return
             }
+            val chest =
+                main.chests.find(Filters.eq("location", clickedBlock.location.toBlockLocation())).first() ?: return
+            event.isCancelled = true
+            Utils.openGUIMain(player, chest.name)
         }
     }
 }
