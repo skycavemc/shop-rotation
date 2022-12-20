@@ -4,19 +4,32 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
-import de.skycave.shoprotation.codecs.*
+import de.leonheuer.mcguiapi.gui.GUIFactory
+import de.skycave.shoprotation.codecs.ChestCodecProvider
+import de.skycave.shoprotation.codecs.ChestItemsCodecProvider
+import de.skycave.shoprotation.codecs.LocationCodec
+import de.skycave.shoprotation.codecs.RewardsCodecProvider
 import de.skycave.shoprotation.command.ShopRotationCommand
+import de.skycave.shoprotation.listener.PlayerInteractListener
 import de.skycave.shoprotation.model.Chest
 import de.skycave.shoprotation.model.ChestItems
+import de.skycave.shoprotation.model.Rewards
+import de.skycave.shoprotation.utils.CurrentItem
+import de.skycave.skycavelib.annotations.InjectService
 import de.skycave.skycavelib.annotations.Prefix
-import de.skycave.skycavelib.data.MessageRegistry
 import de.skycave.skycavelib.models.SkyCavePlugin
+import net.milkbowl.vault.economy.Economy
 import org.bson.codecs.configuration.CodecRegistries
+import org.bukkit.Material
 
 @Prefix("&fSky&3Cave &8» ")
 class ShopRotation : SkyCavePlugin() {
 
-    val messages = MessageRegistry(this)
+    val currentItem = HashMap<Material, Int>()
+
+    companion object {
+        const val MASTER_VOLUME = 1.0f
+    }
 
     lateinit var mongoClient: MongoClient
         private set
@@ -24,40 +37,41 @@ class ShopRotation : SkyCavePlugin() {
         private set
     lateinit var chests: MongoCollection<Chest>
         private set
+    lateinit var rewards: MongoCollection<Rewards>
+        private set
+    lateinit var guiFactory: GUIFactory
+        private set
+
+    @field:InjectService
+    lateinit var economy: Economy
+        private set
 
     override fun onEnable() {
+        super.onEnable()
+
+        guiFactory = GUIFactory(this)
+
         val registry = CodecRegistries.fromRegistries(
-            CodecRegistries.fromCodecs(LocationCodec(), SingleIntCodec()),
-            CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider())
+            CodecRegistries.fromCodecs(LocationCodec()),
+            CodecRegistries.fromProviders(ChestCodecProvider(), ChestItemsCodecProvider(), RewardsCodecProvider()),
+            MongoClientSettings.getDefaultCodecRegistry(),
         )
         val settings = MongoClientSettings.builder().codecRegistry(registry).build()
         mongoClient = MongoClients.create(settings)
         val db = mongoClient.getDatabase("shop_rotation")
         chests = db.getCollection("chests", Chest::class.java)
         chestItems = db.getCollection("chest_items", ChestItems::class.java)
+        rewards = db.getCollection("rewards", Rewards::class.java)
 
         registerCommand("shoprotation", ShopRotationCommand(this))
-        registerEvents()
+        registerEvents(
+            PlayerInteractListener(this)
+        )
+        CurrentItem.calculateCurrentItem()
     }
 
     override fun onDisable() {
-    }
-
-    private fun registerMessages() {
-        val messages = mapOf(
-            //global messages
-            "no-perms" to "&cDu hast keine Rechte für diesen Befehl.",
-            "invalid-number" to "&c%number ist keine gültige Zahl.",
-            "invalid-material" to "&cBitte gib ein gültiges Material an.",
-            "no-player" to "&cDieser Befehl ist nur für Spieler.",
-            "message-unknown" to "&cUnbekannter Befehl. Siehe /shoprotation help",
-
-            //info messages
-
-            //location messages
-            "set-location-success" to "&aOrt wurde erfolgreich gesetzt. &7(%x, %y, %z, %direction)",
-        )
-        this.messages.registerMany(messages)
+        mongoClient.close()
     }
 
 }

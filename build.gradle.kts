@@ -1,5 +1,5 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.*
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -22,11 +22,16 @@ repositories {
             password = localProperties.getProperty("gpr.key")
         }
     }
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
-    compileOnly("de.skycave:skycavelib:1.1.0")
+    compileOnly("de.skycave:skycavelib:2.0.0")
     compileOnly("org.mongodb:mongodb-driver-sync:4.7.1")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.heuerleon:mcguiapi:v1.3.5")
     compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
 }
 

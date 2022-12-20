@@ -1,13 +1,13 @@
 name: ShopRotation
 version: 1.0.0
 api-version: 1.19
-authors: [Hakuyamu, NYC_1809]
+authors: [ Hakuyamu, NYC_1809 ]
 main: de.skycave.shoprotation.ShopRotation
 depend:
   - SkyCaveLibrary
 
 commands:
   shoprotation:
-    aliases: [srotation]
+    aliases: [ srotation ]
     permission: skycave.shoprotation.admin
 

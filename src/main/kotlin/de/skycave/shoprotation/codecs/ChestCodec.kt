@@ -9,6 +9,7 @@ import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
 import org.bson.codecs.configuration.CodecRegistry
 import org.bukkit.Location
+import org.bukkit.Material
 
 class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
 
@@ -30,6 +31,20 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
         writer.writeString(value.name)
         writer.writeName("location")
         locationCodec.encode(writer, value.location, encoderContext)
+        writer.writeName("enabled")
+        writer.writeBoolean(value.enabled)
+        value.item?.let {
+            writer.writeName("item")
+            writer.writeString(it.toString())
+        }
+        writer.writeName("amount")
+        writer.writeInt32(value.amount)
+        writer.writeName("required_amount")
+        writer.writeInt32(value.requiredAmount)
+        writer.writeName("lootpool")
+        writer.writeStartArray()
+        value.lootpool.forEach { writer.writeString(it) }
+        writer.writeEndArray()
         writer.writeEndDocument()
     }
 
@@ -43,6 +58,19 @@ class ChestCodec(codecRegistry: CodecRegistry) : Codec<Chest> {
                 "_id" -> chest.id = reader.readObjectId()
                 "name" -> chest.name = reader.readString()
                 "location" -> chest.location = locationCodec.decode(reader, decoderContext)
+                "enabled" -> chest.enabled = reader.readBoolean()
+                "item" -> chest.item = Material.valueOf(reader.readString())
+                "amount" -> chest.amount = reader.readInt32()
+                "required_amount" -> chest.requiredAmount = reader.readInt32()
+                "lootpool" -> {
+                    val lootpool = ArrayList<String>()
+                    reader.readStartArray()
+                    while (reader.readBsonType() == BsonType.STRING) {
+                        lootpool.add(reader.readString())
+                    }
+                    reader.readEndArray()
+                }
+
                 else -> reader.skipValue()
             }
         }

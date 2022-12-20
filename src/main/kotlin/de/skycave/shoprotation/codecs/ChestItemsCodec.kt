@@ -7,16 +7,10 @@ import org.bson.BsonWriter
 import org.bson.codecs.Codec
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
-import org.bson.codecs.configuration.CodecRegistry
 import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
+import java.util.*
 
-class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
-    private val itemStackCodec: Codec<ItemStack>
-
-    init {
-        itemStackCodec = codecRegistry.get(ItemStack::class.java)
-    }
+class ChestItemsCodec : Codec<ChestItems> {
 
     override fun encode(writer: BsonWriter?, value: ChestItems?, encoderContext: EncoderContext?) {
         writer ?: return
@@ -36,6 +30,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
         }
         writer.writeEndDocument()
         writer.writeEndDocument()
+        //CORRECT? "writeEndDocument" 2x?
     }
 
     override fun decode(reader: BsonReader?, decoderContext: DecoderContext?): ChestItems {
@@ -48,7 +43,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
                 "_id" -> chestitems.id = reader.readObjectId()
                 "name" -> chestitems.name = reader.readString()
                 "items" -> {
-                    val items = HashMap<Material, Int>()
+                    val items = EnumMap<Material, Int>(org.bukkit.Material::class.java)
                     while (reader.readBsonType() == BsonType.DOCUMENT) {
                         reader.readStartDocument()
                         val type = Material.valueOf(reader.readName())
@@ -57,6 +52,7 @@ class ChestItemsCodec(codecRegistry: CodecRegistry): Codec<ChestItems> {
                     }
                     chestitems.items = items
                 }
+
                 else -> reader.skipValue()
             }
         }

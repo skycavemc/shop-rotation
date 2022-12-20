@@ -5,12 +5,12 @@ import org.bson.types.ObjectId
 import org.bukkit.Material
 import java.util.*
 
-class ChestItems {
+class Rewards {
 
     @BsonId
     lateinit var id: ObjectId
     lateinit var name: String
-    var items: EnumMap<Material, Int> = EnumMap(org.bukkit.Material::class.java)
+    var rewardlist: EnumMap<Material, Int> = EnumMap(org.bukkit.Material::class.java)
 
     constructor()
 
